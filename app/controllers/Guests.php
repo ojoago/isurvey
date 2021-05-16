@@ -104,4 +104,9 @@ class Guests extends Controller{
     $_SESSION['isurvey_id']=$user->id;
     redirect('dashboards');
   }
+
+  public function logout(){
+    
+    $this->view('guest/login',$data);
+  }
 }
