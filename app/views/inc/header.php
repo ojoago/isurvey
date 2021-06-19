@@ -10,41 +10,20 @@
     <link rel="shortcut icon" href="<?php echo URLROOT; ?>/isurveyimages/logo.png">
     <link rel="stylesheet" href="<?php echo URLROOT; ?>/css/custom/style.css">
     <link rel="stylesheet" href="<?php echo URLROOT; ?>/dist/css/bootstrap.min.css">
-
-    <!-- Bootstrap core CSS -->
-<link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-    </style>
-
-
-    <!-- Custom styles for this template -->
-    <link href="dashboard.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="<php echo URLROOT; ?>/fontawesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
   <body>
+    <header class="navbar bg-inverse header">
+      <nav class="container-fluid">
+        <span class="navbar-brand"><i class="fa fa-bars mr-3 pointer" id="sidebarToggle"></i> <a href="<?php echo URLROOT ?>/dashboards"><?php echo SITENAME ?></a> </span>
+        <div class="float-right">
+          <?php echo userName() ?>
+          <a href="<?php echo URLROOT ?>/pages/logout" id="logout">Logout</a>
+        </div>
 
-<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Company name</a>
-  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-  <ul class="navbar-nav px-3">
-    <li class="nav-item text-nowrap">
-      <a class="nav-link" href="#">Sign out</a>
-    </li>
-  </ul>
-</header>
+      </nav>
+    </header>
+
+    <?php include_once( APPROOT .'/views/inc/sidebar.php');?>
+    <div class="page-content">

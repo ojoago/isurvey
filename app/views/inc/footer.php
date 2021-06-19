@@ -1,8 +1,6 @@
 
-		<div class="container">
-			<u height= "20"><p class = "pull-right"><b>Committed to excel</u><span class = "red"><u>lent service offering </u></span></b></p>
-		</div>
-	</div>
+
+	<u height= "20"><p class = "pull-right"><b>Committed to excel</u><span class = "red"><u>lent service offering </u></span></b></p>
 	<div class ="footer">
 		<div class = "container-fluid">
 			<div class = "row">
@@ -11,7 +9,7 @@
 					 <!-- <span class= "fa fa-facebook-square"></span><span> Facebook</span><p>facebook.com/iSurvey</p> -->
 				</div>
 				<div class = "col-md-6">
-					<p><i class="fa fa-thumbs-up"></i> please help us improve... feel free to send suggestion and critics by clicking the red button below<i class="fa fa-thumb-tack"></i> </p>
+					<p><i class="fa fa-thumbs-up"></i> please help us improve... feel free to send suggestion and critics by clicking the red button below <i class="fa fa-thumb-tack"></i> </p>
 					<a href ="mailto:isurvey@gmail.com?subject=me&body= "><input type="button" class="btn btn-success createAccount" value="TELL us how to improve"></a>
 				</div>
 					<div class = "col-md-3">
@@ -30,6 +28,8 @@
 				<a href="<?php echo URLROOT.'/guests/index';?>"> SIGN UP</a></center>
 		</div>
 	</div>
+</div>
+
 <button  id="myBtn" title="Go to top">Top</button>
 	<footer id = "footer">
 	<small>
@@ -40,9 +40,11 @@
   <script src="<?php echo URLROOT;?>/js/jquery-3.4.1.min.js"></script>
   <script src="<?php echo URLROOT;?>/js/popper.min.js"></script>
   <script src="<?php echo URLROOT;?>/js/bootstrap.min.js"></script>
-  <script src="<?php echo URLROOT;?>/js/scripts.js"></script>
   <script src="<?php echo URLROOT;?>/js/select2.min.js"></script>
   <script src="<?php echo URLROOT;?>/js/main.js"></script>
+	<script src="<?php echo URLROOT;?>/dist/js/bootstrap.bundle.min.js"></script>
+	<?php require_once('mainjs.php'); ?>
+  <!-- <script src="<php echo URLROOT;?>/fontawesome/js/font-awesome.min.js"></script> -->
 	<script>
 			// When the user scrolls down 20px from the top of the document, show the button
 		window.onscroll = function() {scrollFunction()};

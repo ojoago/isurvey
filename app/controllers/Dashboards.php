@@ -12,5 +12,3 @@
       $this->view('dashboard/index',$data);
     }
   }
-
- ?>

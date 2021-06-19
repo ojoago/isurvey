@@ -18,4 +18,9 @@ class Pages extends Controller{
 
       $this->view('pages/help');
   }
+  public function logout(){
+    session_unset();
+    session_destroy();
+    redirect('pages');
+  }
 }

@@ -25,3 +25,7 @@
     function isLoggedIn(){
         return  isset($_SESSION['isurvey_id']) ? true : false;
     }
+    // url helper
+    function redirect($page){
+        header('Location: '. URLROOT .'/'.$page);
+    }

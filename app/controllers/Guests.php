@@ -63,7 +63,7 @@ class Guests extends Controller{
     if($_SERVER['REQUEST_METHOD']=='POST'){
       $_POST = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
       $data=[
-        'email'=>StaticClass::escapeString($_POST['email']),
+        'email'=>escapeString($_POST['email']),
         'pwd'=>$_POST['pwd']
       ];
       if(empty($data['email'])){
@@ -80,7 +80,7 @@ class Guests extends Controller{
       if(empty($error)){
           $loggedInUser=$this->userModel->login($data);
           if($loggedInUser){
-            $loggedInUser->status==='active' ? $this->createUserSession($loggedInUser) : flash('register_success','Please Verify your email');//$data['email_err']='';
+            $this->createUserSession($loggedInUser);// : flash('register_success','Please Verify your email');//$data['email_err']='';
           }else{
             flash('register_success','Wrong Password!','danger');
           }
@@ -101,12 +101,12 @@ class Guests extends Controller{
     $this->view('guest/reset',$data);
   }
   private function createUserSession($user){
-    $_SESSION['isurvey_id']=$user->id;
+    $_SESSION['isurvey_id']=($user->id);
     redirect('dashboards');
   }
 
   public function logout(){
-    
+
     $this->view('guest/login',$data);
   }
 }

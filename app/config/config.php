@@ -13,4 +13,6 @@
   define('RESPONSE_TBL','response');
   define('OPTIONS','options');
   define('RESPONDENT_TBL','respondent');
+  define('QUICK_Q_TBL','quick_questions');// quick question table
+
   define('NAIRA','&#8358;');

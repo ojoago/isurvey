@@ -3,8 +3,7 @@
    *
    */
    function escapeString($str){
-     $str = trim(stripslashes(htmlspecialchars($str)));
-     return $str;
+     return stripslashes(htmlspecialchars(trim($str)));
    }
    function isNum($n){
      return is_numeric($n) ? true : false;
@@ -51,6 +50,9 @@
    function minLength($n,$l=6){
      return strlen($n) >=$l ? true : false;
    }
+   function maxLength($n,$l=11){
+     return strlen($n)==$l ? true : false;
+   }
    function upperCase($str){
      return preg_match('/[A-Z]/',$str) ? true : false;
    }
@@ -70,4 +72,40 @@
 
    function verifyEmail($mail){
      return filter_var($mail,FILTER_VALIDATE_EMAIL) ? true : false;
+   }
+   function toDay(){
+     return date('Y-m-d');
+   }
+
+   function dateTime(){
+     return date('Y-m-d H:i:s');
+   }
+   function userName(){
+      return 'OJOago';
+   }
+   function userId(){
+     return isset($_SESSION['isurvey_id']) ? base64_decode($_SESSION['isurvey_id']) : false;
+   }
+   function printMsg($msg,$class='success'){
+     echo '<div class="alert alert-dismissible alert-'.$class.' p-1" role ="alert" >
+       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+       '.$msg.'
+     </div>';
+     exit;
+   }
+   function prettyMsg($msg,$class='success'){
+     return '<div class="alert alert-dismissible alert-'.$class.' p-1" role ="alert" >
+       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+       '.$msg.'
+     </div>';
+   }
+   // format date
+   function prettyDateTime($date){
+     return date('d-m-Y H:i:s',strtotime($date));
+   }
+   function prettyDate($date){
+     return date('d-M, Y',strtotime($date));
+   }
+   function decodeHtmlEntity($str){
+     return html_entity_decode($str);
    }
