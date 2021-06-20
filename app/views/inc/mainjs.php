@@ -1,4 +1,20 @@
 <script>
+  // $( function() {
+  //   $(".datepicker").datepicker({dateFormat: "yy-mm-dd"}).attr('readonly',true);
+  // });
+  function showAlert(data,time=2){
+    $('#messageBox').text(data);
+    $('#messageBox').show();
+    setInterval(function(){
+      $('#messageBox').hide();
+    }, time*1000);
+  }
+  // $('[rel=tooltip]').tooltip({trigger: "hover"});
+  function delayTime(time=2){
+    setInterval(function(){
+      $('#messageBox').hide();
+    }, time*1000);
+  }
   $(document).ready(function(){
     // toggle sidebar
     $('#sidebarToggle').click(function(){

@@ -27,53 +27,10 @@
           <div class="tab-pane fade in show active" id ="questions">
             <fieldset class="border p-4">
               <legend  class="w-auto small text-center" style="float:center"> <label>Questions</label> </legend>
-              <input type="text" name="formTitle" value="Untitled Form" class="form-control">
-              <input type="text" name="fromDsc" value="" placeholder="Form Description" class="form-control">
+              <div class="" id="formHeader"></div>
             </fieldset>
-            <fieldset class="border p-4 m-1">
-              <div class="card">
-                <div class="card-header">
-                  <div class="row">
-                    <div class="col-md-10">
-                      <input type="text" name="" value="">
-                      <input type="file" name="" value="">
-                    </div>
-                    <div class="col-md-2">
-                      <div class="dropdown">
-                        <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                          <input type="radio" disabled>  Dropdown button
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                          <li><a class="dropdown-item" href="#"> <i class="fa  fa-dot-circle-o mr-1"></i> Multi choice Select One</a></li>
-                          <li><a class="dropdown-item" href="#"> <i class="fa fa-check-square mr-1"></i> Multi choice Select Many</a></li>
-                          <li><a class="dropdown-item" href="#"> <i class="fa  fa-toggle-down mr-1"></i> Dropdown Select One </a></li>
-                          <div class="dropdown-divider"></div>
-                          <li><a class="dropdown-item" href="#"> <i class="fa fa-signal"></i> linear Scale</a></li>
-                          <div class="dropdown-divider"></div>
-                          <!-- <li><a class="dropdown-item" href="#"> <i class="fa fa-paragraph mr-1"></i> Paragraph</a></li> -->
-                          <li><a class="dropdown-item" href="#"> <i class="fa fa-align-left"></i> Sentence</a></li>
-                          <div class="dropdown-divider"></div>
-                          <li><a class="dropdown-item" href="#"> <i class="fa fa-clock-o mr-1"></i> Time</a></li>
-                          <li><a class="dropdown-item" href="#"> <i class="fa fa-calendar mr-1"></i> Date</a></li>
-                          <!-- <li><a class="dropdown-item" href="#"><i class="fa fa-calendar mr-1"></i>Date & Time</a></li> -->
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-body">
-                  <input type="radio" name="" value="" disabled> <input type="text" name="" value="option 1"><br>
-                  <input type="radio" name="" value="" disabled> <input type="text" name="" value="option 2" disabled>
-                </div>
-                <div class="card-footer">
-                  <i class="fa fa-trash-o pointer m-1"></i>
-                  <i class="fa fa-copy pointer m-1"></i>
-                  |
-                  required
-                  <input type="checkbox" name="" value="" data-toggle="tooltip" title="Compulsory">
-                </div>
-              </div>
-            </fieldset>
+            <div class="" id="nextQuestion"></div>
+            <fieldset id="fieldset"></fieldset>
             <div class="" id="formOptionControl">
               Controller
             </div>
@@ -86,16 +43,98 @@
             </fieldset>
           </div>
         </div>
-
-
       </div>
-
     </div>
 </div>
 <?php include_once(APPROOT.'/views/inc/footer.php');?>
 <script>
   $(document).ready(function(){
-    alert()
+    loadFormHeader(0)
+    function loadFormHeader(id){
+      $.ajax({
+        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        type:"POST",
+        data:{loadFormHeader:true,formId:id},
+        success:function(data){
+          $('#formHeader').html(data);
+        }
+      });
+    }
+    function loadFieldSet(){
+      $.ajax({
+        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        type:"POST",
+        data:{loadFieldSet:true},
+        success:function(data){
+          $('#fieldset').append(data);
+        }
+      });
+    }
+    loadCurrentQuestionHeader()
+
+    function loadCurrentQuestionHeader(){
+      loadFieldSet()
+      delayTime(5);
+      loadInput()
+    }
+    function loadQuestionHeader(id){
+      $.ajax({
+        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        type:"POST",
+        data:{loadQuestionHeader:true,id:id},
+        success:function(data){
+          $('#questionHeader').html(data);
+        }
+      });
+    }
+
+    nextQuestionController()
+    function nextQuestionController(){
+      $.ajax({
+        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        type:"POST",
+        data:{loadQuestionTypeController:true},
+        success:function(data){
+          $('#nextQuestion').html(data);
+        }
+      });
+    }
+    // form inputs
+    function loadInput(){
+      $.ajax({
+        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        type:"POST",
+        data:{loadFormInput:true},
+        success:function(data){
+          $('#inputType').append(data);
+        }
+      });
+    }
+    $(document).on('click','#nextOption',function(){
+      loadInput()
+    });
+    //loadQuestionController()
+    function loadQuestionController(){
+      $.ajax({
+        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        type:"POST",
+        data:{loadQuestionController:true},
+        success:function(data){
+        //  $('#questionController').html(data);
+        }
+      });
+    }
+    $(document).on('click','.dropdown-item',function(){
+      var type=$(this).attr('id');
+      $.ajax({
+        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        type:"POST",
+        data:{loadNextQuestion:true,type:type},
+        success:function(data){
+          $('#fieldset').append(data);
+        }
+      });
+    });
   })
 </script>
 
