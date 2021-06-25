@@ -23,7 +23,7 @@
     }
 
     function isLoggedIn(){
-        return  isset($_SESSION['isurvey_id']) ? true : false;
+        return  isset($_SESSION['iSurveyUserId']) ? true : false;
     }
     // url helper
     function redirect($page){

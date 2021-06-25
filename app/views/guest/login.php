@@ -76,14 +76,14 @@ u{
                 <form action="<?php echo URLROOT;?>/guests/login" method="post">
                     <div class="form-group">
                         <!-- <label for="name">E-Mail: <sup class="text-danger red">*</sup></label> -->
-                      <i class="fa fa-user fa-1x red"> *</i>  <input autocomplete="off" type="email" name= "email" placeholder="E-mail Address"class="form-controls form-control-small <?php echo(!empty($data['email_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo$data['email'];?>">
+                      <i class="fa fa-user fa-1x red"> *</i>  <input autocomplete="off" type="email" name= "email" placeholder="E-mail Address"class="form-controls form-control-small <?php echo(!empty($data['email_err'])) ? 'is-invalid' : ''; ?>" value="dhasmom01@gmail.com<?php echo$data['email'];?>">
                         <span class="invalid-feedback"><?php echo $data['email_err']; ?></span>
                     </div>
 
                     <div class="form-group">
                         <!-- <label for="name">PASSWORD: <sup class="text-danger red">*</sup></label> -->
                         <i class="fa fa-lock fa-1x red"> *</i>
-                        <input type="password" name= "pwd" id="pwd" placeholder="Password" class="form-controls form-control-small <?php echo(!empty($data['pwd_err'])) ? 'is-invalid' : ''; ?>" value="" autocomplete="off">
+                        <input type="password" name= "pwd" id="pwd" placeholder="Password" class="form-controls form-control-small <?php echo(!empty($data['pwd_err'])) ? 'is-invalid' : ''; ?>" value="1234" >
                         <i id="togglePwd" class="fa fa-eye pointer"></i><span class="invalid-feedback"><?php echo $data['pwd_err']; ?></span>
                     </div>
                     <div class="row mb-3">

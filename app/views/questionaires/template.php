@@ -14,7 +14,7 @@
 </style>
 <div class="container mt-2">
     <div class="card mb-4">
-      <div class="card-header"> <?php echo userId() ?>
+      <div class="card-header">
         <ul class="nav nav-tabs">
     			<li class="nav-item"><a data-bs-toggle="tab" href="#questions" class="nav-link "><i class="fa fa-cog mr-1"></i>Questions </a></li>
     			<li class="nav-item"><a data-bs-toggle="tab" href="#response" class="nav-link"><i class="fa fa-user mr-1"></i> Response</a></li>
@@ -49,7 +49,18 @@
 <?php include_once(APPROOT.'/views/inc/footer.php');?>
 <script>
   $(document).ready(function(){
-    loadFormHeader(0)
+    formHeader(0)
+    function formHeader(id){
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{editFrom:true,formId:id},
+        success:function(data){
+          loadFormHeader(data);
+        }
+      });
+    }
+
     function loadFormHeader(id){
       $.ajax({
         url:"<?php echo URLROOT ?>/functions/formsHelper.php",
@@ -60,22 +71,27 @@
         }
       });
     }
-    function loadFieldSet(){
+    // update form name goes here
+    // update form name
+    $(document).on('change','#formTitle',function(){
+      var note =$('#formDsc').val();
+      var name=$(this).val();
+      updateFormName(name,note);
+    });
+    $(document).on('change','#formDsc',function(){
+      var name=$('#formTitle').val();
+      var note=$(this).val();
+      updateFormName(name,note);
+    });
+    function updateFormName(name,note){
       $.ajax({
-        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
         type:"POST",
-        data:{loadFieldSet:true},
+        data:{updateFormInfo:true,name:name,note:note},
         success:function(data){
-          $('#fieldset').append(data);
+          loadFormHeader(data);
         }
       });
-    }
-    loadCurrentQuestionHeader()
-
-    function loadCurrentQuestionHeader(){
-      loadFieldSet()
-      delayTime(5);
-      loadInput()
     }
     function loadQuestionHeader(id){
       $.ajax({
@@ -88,14 +104,14 @@
       });
     }
 
-    nextQuestionController()
-    function nextQuestionController(){
+    nextQuestionController('nextQuestion');
+    function nextQuestionController(id){
       $.ajax({
         url:"<?php echo URLROOT ?>/functions/formsHelper.php",
         type:"POST",
         data:{loadQuestionTypeController:true},
         success:function(data){
-          $('#nextQuestion').html(data);
+          $('#'+id).html(data);
         }
       });
     }
@@ -110,22 +126,33 @@
         }
       });
     }
-    $(document).on('click','#nextOption',function(){
-      loadInput()
+    // create question options
+    $(document).on('click','.createNextOption',function(){
+      id=$(this).attr('id');
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{createNextOption:true,id:id},
+        success:function(data){
+          loadMoreOption(id,data);
+        }
+      });
     });
-    //loadQuestionController()
-    function loadQuestionController(){
+    // load more option on create or reload
+
+    function loadMoreOption(qid,oid){//qid =question id, oid option id
       $.ajax({
         url:"<?php echo URLROOT ?>/functions/formsHelper.php",
         type:"POST",
-        data:{loadQuestionController:true},
+        data:{loadActiveOption:true,id:oid},
         success:function(data){
-        //  $('#questionController').html(data);
+          $('#inputType'+qid).append(data);
         }
       });
     }
-    $(document).on('click','.dropdown-item',function(){
-      var type=$(this).attr('id');
+    loadFieldSet()
+    // adding more question
+    function loadFieldSet(type='radio'){
       $.ajax({
         url:"<?php echo URLROOT ?>/functions/formsHelper.php",
         type:"POST",
@@ -134,6 +161,106 @@
           $('#fieldset').append(data);
         }
       });
+    }
+
+    $(document).on('click','.dropdown-item',function(){
+      var type=$(this).attr('id');
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{createMoreQuestion:true,type:type},
+        success:function(){
+          loadFieldSet()
+        }
+      });
+    });
+    $(document).on('change','.questionTitle',function(){
+      var id=$(this).attr('id');
+      var qs=$(this).val();
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{updateQuestionTitle:true,id:id,question:qs},
+        success:function(){}
+      });
+    });
+    // editing question option
+    $(document).on('change','.questionOption',function(){
+      var id=$(this).attr('id');
+      var option=$(this).val();
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{updateQuestionOption:true,id:id,option:option},
+        success:function(){}
+      });
+    });
+    // remove question option
+    $(document).on('click','.removeOption',function(){
+      var id =$(this).attr('id');
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{deleteQuestionOption:true,id:id},
+        success:function(data){
+          $('#optionWrapper'+id).remove();
+        }
+      });
+    });
+
+    // make question Compulsory
+    $(document).on('change','.compulsoryCheck',function(){
+      var id=$(this).attr('id');
+      if($(this).prop('checked')){
+        var action='required';
+      }else {
+        var action='';
+      }
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{requiredCheck:true,id:id,action:action},
+        success:function(){
+          showAlert('State Toggled');
+        }
+      });
+    });
+    // remove question
+    $(document).on('click','.removeQuestion',function(){
+      id=$(this).attr('id');
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{deleteQuestionAndOption:true,id:id},
+        success:function(data){
+          $('#fieldset'+id).remove();
+        }
+      });
+    });
+    $(document).on('change','.questionImage',function(){
+      var id=$(this).attr('id');
+      data = new FormData();
+      data.append('id',id)
+      data.append('file',$(this)[0].files[0]);
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageImage",
+        type:"POST",
+        data:data,
+        enctype:'multipart/form-data',
+        processData:false,
+        contentType:false,
+        success:function(data){
+          alert(data);
+        }
+      });
+    })
+    // show control btn on active fieldset
+    $(document).on('click','.questionFieldset',function(){
+      // $('.questionController').hide();
+      var id=$(this).attr('id');
+      var id =$(this).find('.questionController').attr('id');
+      nextQuestionController(id)
+
     });
   })
 </script>

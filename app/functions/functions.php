@@ -15,7 +15,9 @@
      echo json_encode($data);
      exit;
    }
-
+   function formRandomId(){
+     return date('hism');
+   }
    function avaterTxt(){
      $num='0123456789';
      $txt="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -40,6 +42,36 @@
      imagestring($image,$size,0,0,$txt,$color);
      imagejpeg($image);
    }
+   // some public methods goes down here
+  function extractImg($name,$tmp,$dir='images'){
+    $Ext = explode('.', $name);
+    $Ext = strtolower(end($Ext));
+    $size=filesize($tmp);
+    $allowed = array('jpg','jpeg','png','JPG','JPEG','PNG');
+    if(in_array($Ext,$allowed)){
+      //$name=rand(10,1000).$name;
+      $file = $dir."/".$name;
+      move_uploaded_file($tmp,$file);
+      if(is_file($file)){
+        $percent=0.26;
+        if($size< 1024*1024)
+          $percent=1;
+        list($width,$height)=getimagesize($file);
+        $newW=$width*$percent;
+        $newH=$height*$percent;
+        $thumb=imagecreatetruecolor($newW,$newH);
+        if($Ext=='jpg' or $Ext=='jpeg')
+        $sourceImg=imagecreatefromjpeg($file);
+        elseif($Ext=='gif' or $Ext=='GIF')
+        $sourceImg=imagecreatefromgif($file);
+        elseif($Ext=='png' or $Ext=='PNG')
+        $sourceImg=imagecreatefrompng($file);
+        imagecopyresized($thumb,$sourceImg,0,0,0,0,$newW,$newH,$width,$height);
+        imagejpeg($thumb,$file);
+      }else{ return false;}
+    }else{return false;}
+    return $name;
+  }
    // reset array function
    function resetArray($array){
      foreach ($array as $key => $r) {
@@ -81,10 +113,10 @@
      return date('Y-m-d H:i:s');
    }
    function userName(){
-      return 'OJOago';
+      return base64_decode($_SESSION['iSurveyUserEMail']);
    }
    function userId(){
-     return isset($_SESSION['isurvey_id']) ? base64_decode($_SESSION['isurvey_id']) : false;
+     return isset($_SESSION['iSurveyUserId']) ? base64_decode($_SESSION['iSurveyUserId']) : false;
    }
    function printMsg($msg,$class='success'){
      echo '<div class="alert alert-dismissible alert-'.$class.' p-1" role ="alert" >
@@ -108,4 +140,22 @@
    }
    function decodeHtmlEntity($str){
      return html_entity_decode($str);
+   }
+   function sentenceCase($str){
+     $cap = true;
+     $ret='';
+     for($x = 0; $x < strlen($str); $x++){
+         $letter = substr($str, $x, 1);
+         if($letter == "." || $letter == "!" || $letter == "?"){
+             $cap = true;
+         }elseif($letter != " " && $cap == true){
+             $letter = strtoupper($letter);
+             $cap = false;
+         }
+         $ret .= $letter;
+     }
+     return $ret;
+   }
+   function ajaxControl(){
+     isLoggedIn() ?: exit();
    }

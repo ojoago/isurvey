@@ -101,12 +101,14 @@ class Guests extends Controller{
     $this->view('guest/reset',$data);
   }
   private function createUserSession($user){
-    $_SESSION['isurvey_id']=($user->id);
+    $_SESSION['iSurveyUserId']=base64_encode($user->id);
+    $_SESSION['iSurveyUserEMail']=base64_encode($user->mail);
     redirect('dashboards');
   }
 
   public function logout(){
-
+    session_unset();
+    session_destroy();
     $this->view('guest/login',$data);
   }
 }

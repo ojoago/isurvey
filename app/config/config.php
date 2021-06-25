@@ -8,10 +8,10 @@
   define('SITENAME','iSurvey'); //app name
   define('APPVERSION','0.1');//app version
   define('USER_TBL','users_tbl');//login table
-  define('PRJ_TBL','projects');
+  define('FMS_TBL','forms');
   define('QSN_TBL','questions');
   define('RESPONSE_TBL','response');
-  define('OPTIONS','options');
+  define('OPN_TBL','options');
   define('RESPONDENT_TBL','respondent');
   define('QUICK_Q_TBL','quick_questions');// quick question table
 

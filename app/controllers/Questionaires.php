@@ -1,7 +1,7 @@
 <?php
   class Questionaires extends Controller{
     public function __construct(){
-      $this->qsModel=$this->model('Questionaire');
+      $this->model=$this->model('Questionaire');
     }
   function index($id=0){
       $data=['user'=>'','questionaire'=>''];
@@ -51,10 +51,96 @@
           }
         }
         if(empty($error)){
-          $this->qsModel->saveQuickQuestion($data);
+          $this->model->saveQuickQuestion($data);
         }
 
         $questionTitle='';
       }
+    }
+
+    // creating and updating questionaires goes here
+    public function manageForm(){
+      if(isset($_POST['editFrom'])){
+        ajaxControl();
+        if(!isset($_SESSION['formId'])){
+          $data=[
+            'name'=>'Untitled Form',
+            'dsc'=>'',
+            'id'=>''
+          ];
+          $_SESSION['formId']=$this->model->saveForm($data);
+          $_SESSION['number']=0;
+          $this->nextQuestion();
+        }
+        echo $_SESSION['formId'];
+      }
+      // update form name and description
+      if(isset($_POST['updateFormInfo'])){
+        ajaxControl();
+          $data=[
+            'name'=>escapeString($_POST['name']),
+            'dsc'=>escapeString($_POST['note']),
+            'id'=>$_SESSION['formId']
+          ];
+        $this->model->saveForm($data);
+      }
+      // create next question
+      if(isset($_POST['createMoreQuestion'])){
+        ajaxControl();
+        $this->nextQuestion(escapeString($_POST['type']));
+      }
+      // update question text
+      if(isset($_POST['updateQuestionTitle'])){
+        ajaxControl();
+        $this->model->updateFormQuestion(escapeString($_POST['id']),escapeString($_POST['question']));
+      }
+      // create active question options
+      if(isset($_POST['createNextOption'])){
+        ajaxControl();
+        echo $this->nextOption(escapeString($_POST['id']));
+      }
+      // update question option on change
+      if(isset($_POST['updateQuestionOption'])){
+        ajaxControl();
+        $this->model->updateQuestionOption(escapeString($_POST['id']),escapeString($_POST['option']));
+      }
+      if(isset($_POST['deleteQuestionOption'])){
+        ajaxControl();
+        $this->model->deleteQuestionOption(escapeString($_POST['id']));
+        echo str_replace('_','',$_POST['id']);// return in order to remove html
+      }
+      // delete question and options
+      if(isset($_POST['deleteQuestionAndOption'])){
+        ajaxControl();
+        $this->model->deleteQuestion(str_replace('_r','',escapeString($_POST['id'])));
+      }
+      // make question answering Compulsory
+      if(isset($_POST['requiredCheck'])){
+        ajaxControl();
+        $this->model->toggleRequired(str_replace('required','',escapeString($_POST['id'])),escapeString($_POST['action']));
+      }
+    }
+    private function nextQuestion($option='radio'){
+      $data=[
+        'type'=>'text',
+        'option_type'=>$option,
+        'question'=>'Question '.++$_SESSION['number'],
+        'formId'=>$_SESSION['formId'],
+      ];
+      echo $this->nextOption($this->model->createFormQuestion($data));
+    }
+    private function nextOption($id,$option='option'){
+      return $this->model->createQuestionOption($id,$option);
+    }
+
+    public function manageImage(){
+      ajaxControl();
+      $data=[
+        'id'=>str_replace('image','',escapeString($_POST['id'])),
+        'path'=>rand(10,500) .'-'.$_FILES['file']['name'],
+        'type'=>'image',
+      ];
+      $this->model->updateQuestionToImage($data);
+      extractImg($data['path'],$_FILES['file']['tmp_name'],'questionImages');
     }
   }

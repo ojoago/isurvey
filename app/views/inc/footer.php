@@ -30,7 +30,7 @@
 	</div>
 </div>
 
-<button  id="myBtn" title="Go to top">Top</button>
+<button  id="backToTop" title="Go to top">Top</button>
 	<footer id = "footer">
 	<small>
 		Copyright &copy  2020 <span>All Right Reserve</span> ELEVATE TECHIE | iSurvey is a platform designed and developed by <a href="www.elevate.com">ELEVATE TECHIE</a>.

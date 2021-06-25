@@ -8,7 +8,7 @@
       $this->db=new Database;
     }
     public function login($data){
-      $this->db->query("SELECT pwd,status,id FROM ".USER_TBL." WHERE mail=? LIMIT 1");
+      $this->db->query("SELECT pwd,status,id,mail FROM ".USER_TBL." WHERE mail=? LIMIT 1");
       $this->db->bind(1,$data['email']);
       $row=$this->db->single();
       return password_verify($data['pwd'],$row->pwd) ? $row : false;
