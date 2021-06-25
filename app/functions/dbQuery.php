@@ -36,7 +36,7 @@
   }
   function loadOption($id){
     $db = new Database;
-    $db->query("SELECT id,options FROM ".OPN_TBL." WHERE qid = ? ");
+    $db->query("SELECT id,options FROM ".OPN_TBL." WHERE qid = ? ORDER BY created_on ASC");
     $db->bind(1,$id);
     return $db->resultSet();
   }

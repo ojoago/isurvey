@@ -23,7 +23,7 @@
     $('[rel=tooltip]').tooltip({trigger: "hover"});
   $('#backToTop').click(function(e){
 		e.preventDefault();
-	   $('html, body').animate({scrollTop:0},'3000');
+	   $('html, body').animate({scrollTop:0},'100');
 	});
 	// window.onscroll = function() {scrollFunction()};
 	// 	function scrollFunction() {

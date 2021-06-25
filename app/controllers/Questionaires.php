@@ -97,7 +97,9 @@
       // create active question options
       if(isset($_POST['createNextOption'])){
         ajaxControl();
-        echo $this->nextOption(escapeString($_POST['id']));
+        $id=str_replace('nextOption','',escapeString($_POST['id']));
+        $oid =$this->nextOption($id);
+        jsonEncode(['id'=>$id,'oid'=>$oid]);
       }
       // update question option on change
       if(isset($_POST['updateQuestionOption'])){
@@ -119,6 +121,14 @@
         ajaxControl();
         $this->model->toggleRequired(str_replace('required','',escapeString($_POST['id'])),escapeString($_POST['action']));
       }
+      // change question type
+      if(isset($_POST['changeQuestionType'])){
+        ajaxControl();
+        $id=str_replace('qtype','',escapeString($_POST['id']));
+        $this->model->changeQuestionType($id,escapeString($_POST['type']));
+        echo$id;
+      }
+
     }
     private function nextQuestion($option='radio'){
       $data=[

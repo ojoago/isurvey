@@ -88,9 +88,17 @@
       $this->db->bind(':question',sentenceCase($text));
       return $this->db->execute() ? true : false;
     }
+    // make question Compulsory or not
     public function toggleRequired($id,$action){
       $this->db->query("UPDATE ".QSN_TBL." SET requires=:rq WHERE id=:id LIMIT 1");
       $this->db->bind(':rq',strtolower($action));
+      $this->db->bind(':id',$id);
+      return $this->db->execute() ? true : false;
+    }
+    // change question type 
+    public function changeQuestionType($id,$type){
+      $this->db->query("UPDATE ".QSN_TBL." SET option_type=:type WHERE id=:id LIMIT 1");
+      $this->db->bind(':type',$type);
       $this->db->bind(':id',$id);
       return $this->db->execute() ? true : false;
     }

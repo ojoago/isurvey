@@ -1,4 +1,29 @@
 <?php
+
+function dropDown($name='Next Question'){
+  $dropDown='
+        <div class="dropdown">
+          <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <input type="radio" disabled>'.$name.'
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a class="dropdown-item" href="#" id="radio"> <i class="fa  fa-dot-circle-o mr-1"></i> Multi choice Select One</a></li>
+            <li><a class="dropdown-item" href="#" id="checkbox"> <i class="fa fa-check-square mr-1"></i> Multi choice Select Many</a></li>
+            <li><a class="dropdown-item" href="#" id="dropdown"> <i class="fa  fa-toggle-down mr-1"></i> Dropdown Select One </a></li>
+            <div class="dropdown-divider"></div>
+            <li><a class="dropdown-item" href="#" id="linear"> <i class="fa fa-signal"></i> linear Scale</a></li>
+            <div class="dropdown-divider"></div>
+            <!-- <li><a class="dropdown-item" href="#" id="short"> <i class="fa fa-paragraph mr-1"></i> Paragraph</a></li> -->
+            <li><a class="dropdown-item" href="#" id="Sentence"> <i class="fa fa-align-left"></i>Sentence</a></li>
+            <div class="dropdown-divider"></div>
+            <li><a class="dropdown-item" href="#" id="time"> <i class="fa fa-clock-o mr-1"></i> Time</a></li>
+            <li><a class="dropdown-item" href="#" id="date"> <i class="fa fa-calendar mr-1"></i> Date</a></li>
+            <!-- <li><a class="dropdown-item" href="#"><i class="fa fa-calendar mr-1"></i>Date & Time</a></li> -->
+          </ul>
+        </div>
+  ';
+  return $dropDown;
+}
    function productCat($id=0){
      $conn= new Database;
      $conn->query("SELECT id,category FROM ".PRD_CAT_TBL." ORDER BY category ASC");
@@ -63,70 +88,8 @@
        echo '<option>no category</option>';
      }
    }
-   function ListProductCat(){
-     $conn= new Database;
-     $conn->query("SELECT DISTINCT(p.category) AS id,c.category FROM ".PRD_CAT_TBL." c INNER JOIN ".PRD_TBL." p
-                  ON p.category=c.id  ORDER BY category ASC");
-     $sql = $conn->resultSet();
-     if($conn->rowCount() > 0){
-       foreach($sql as $row){
-        ?><input type = "button" id = "<?php echo $row->id ?>" class = "btn btn-small bg-light productCat" value = "<?php echo strtolower($row->category) ?>"> <?php
-       }
-     }
-   }
-
-   function sqrMeter($id=0){
-     $conn= new Database;
-     $conn->query("SELECT id,sqrm FROM ".SQRM_TBL." ORDER BY sqrm ASC");
-     $sql = $conn->resultSet();
-     if($conn->rowCount() > 0){
-       foreach($sql as $row){
-           ?><option <?php if($row->id==$id or $id==$row->sqrm ){echo 'selected';} ?>>
-             <?php echo $row->sqrm ?></option><?php
-       }
-     }else {
-       echo '<option>empty</option>';
-     }
-   }
 
 
-   if(isset($_POST['loopSearch'])){
-     $result='';
-     $_POST = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
-     $txt=escapeString($_POST['txt']);
-     if(!empty($txt)){
-       $db=new Database;
-       $db->query("SELECT DISTINCT names,order_id FROM ".SALES_TBL." WHERE order_id LIKE ? OR names LIKE ? OR gsm LIKE ? LIMIT 30");
-       $db->bind(1,"%$txt%");
-       $db->bind(2,"%$txt%");
-       $db->bind(3,"%$txt%");
-       $rows=$db->resultSet();
-       if($rows){
-         foreach($rows as $row){
-           $result.='<li><a href="'. URLROOT.'/carts/receipt/'.$row->order_id.'">'.$row->order_id.' <small>'.$row->names.' <small class="pull-right text-right">receipt</small></small></a></li>';
-         }
-       }
-       $db->query("SELECT names,gsm,cid FROM ".CST_TBL." WHERE names LIKE ? OR gsm LIKE ? LIMIT 30");
-       $db->bind(1,"%$txt%");
-       $db->bind(2,"%$txt%");
-       $rows=$db->resultSet();
-       if($rows){
-         foreach($rows as $row){
-           $result.='<li><a href="'. URLROOT.'/customers/deposit/'.$row->cid.'">'.$row->gsm.' <small>'.$row->names.' <small class="pull-right text-right">Customer</small></small></a></li>';
-         }
-       }
-       $db->query("SELECT amount,type,id FROM ".CST_LG_TBL." WHERE id = ? LIMIT 30");
-       $db->bind(1,$txt);
-       $rows=$db->resultSet();
-       if($rows){
-         foreach($rows as $row){
-           $result.='<li><a href="'. URLROOT.'/customers/depositreceipt/'.$row->id.'">'.$row->amount.' <small>'.$row->type.' <small class="pull-right text-right">Deposit Receipt</small></small></a></li>';
-         }
-       }
-     }
-     jsonEncode($result);
-   }
-   
    if(isset($_POST['backUpDatabase'])){
      $database_name = "SBM";
      $conn=mysqli_connect(DB_HOST,DB_USER,DB_PASS,DB_NAME) or die('failed to connect to database');

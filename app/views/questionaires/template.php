@@ -50,6 +50,7 @@
 <script>
   $(document).ready(function(){
     formHeader(0)
+    // create new form if not Exist
     function formHeader(id){
       $.ajax({
         url:"<?php echo URLROOT ?>/questionaires/manageForm",
@@ -60,7 +61,7 @@
         }
       });
     }
-
+    // load form
     function loadFormHeader(id){
       $.ajax({
         url:"<?php echo URLROOT ?>/functions/formsHelper.php",
@@ -103,7 +104,21 @@
         }
       });
     }
-
+    // change question type
+    $(document).on('change','.changeQuestionType',function(){
+      var id=$(this).attr('id');
+      var type=$(this).val();
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{changeQuestionType:true,id:id,type:type},
+        success:function(data){
+          alert(data)
+          alert('write logic to reload question');
+        //  $('#questionHeader').html(data);
+        }
+      });
+    });
     nextQuestionController('nextQuestion');
     function nextQuestionController(id){
       $.ajax({
@@ -115,26 +130,17 @@
         }
       });
     }
-    // form inputs
-    function loadInput(){
-      $.ajax({
-        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
-        type:"POST",
-        data:{loadFormInput:true},
-        success:function(data){
-          $('#inputType').append(data);
-        }
-      });
-    }
+
     // create question options
     $(document).on('click','.createNextOption',function(){
       id=$(this).attr('id');
       $.ajax({
         url:"<?php echo URLROOT ?>/questionaires/manageForm",
         type:"POST",
+        dataType:'JSON',
         data:{createNextOption:true,id:id},
         success:function(data){
-          loadMoreOption(id,data);
+          loadMoreOption(data.id,data.oid);
         }
       });
     });
@@ -158,11 +164,15 @@
         type:"POST",
         data:{loadNextQuestion:true,type:type},
         success:function(data){
-          $('#fieldset').append(data);
+          $('#fieldset').html(data);
+          scrollBottom()
         }
       });
     }
 
+    function scrollBottom(){
+      $("html, body").animate({ scrollTop: 100 + $(document).height()},'slow');
+    }
     $(document).on('click','.dropdown-item',function(){
       var type=$(this).attr('id');
       $.ajax({
@@ -198,14 +208,16 @@
     // remove question option
     $(document).on('click','.removeOption',function(){
       var id =$(this).attr('id');
-      $.ajax({
-        url:"<?php echo URLROOT ?>/questionaires/manageForm",
-        type:"POST",
-        data:{deleteQuestionOption:true,id:id},
-        success:function(data){
-          $('#optionWrapper'+id).remove();
-        }
-      });
+      if(confirm('delete ?')){
+        $.ajax({
+          url:"<?php echo URLROOT ?>/questionaires/manageForm",
+          type:"POST",
+          data:{deleteQuestionOption:true,id:id},
+          success:function(data){
+            $('#optionWrapper'+id).remove();
+          }
+        });
+      }
     });
 
     // make question Compulsory
