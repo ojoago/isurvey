@@ -87,12 +87,17 @@
       // create next question
       if(isset($_POST['createMoreQuestion'])){
         ajaxControl();
-        $this->nextQuestion(escapeString($_POST['type']));
+        jsonEncode($this->nextQuestion(escapeString($_POST['type'])));
       }
       // update question text
       if(isset($_POST['updateQuestionTitle'])){
         ajaxControl();
         $this->model->updateFormQuestion(escapeString($_POST['id']),escapeString($_POST['question']));
+      }
+      // create/update question note
+      if(isset($_POST['updateQuestionNote'])){
+          ajaxControl();
+          $this->model->updateQuestionNote(str_replace('_n_','',escapeString($_POST['id'])),escapeString($_POST['note']));
       }
       // create active question options
       if(isset($_POST['createNextOption'])){
@@ -126,9 +131,16 @@
         ajaxControl();
         $id=str_replace('qtype','',escapeString($_POST['id']));
         $this->model->changeQuestionType($id,escapeString($_POST['type']));
-        echo$id;
+        $this->getType($id,$_POST['type']);
+        echo $id;
       }
 
+    }
+    private function getType($id,$type){
+      $array=['linear','time','date','Sentence'];
+      if(in_array($type,$array)){
+        $this->model->deleteOption($id);
+      }
     }
     private function nextQuestion($option='radio'){
       $data=[
@@ -137,10 +149,12 @@
         'question'=>'Question '.++$_SESSION['number'],
         'formId'=>$_SESSION['formId'],
       ];
-      echo $this->nextOption($this->model->createFormQuestion($data));
+      $id=$this->model->createFormQuestion($data);
+      $this->nextOption($id);
+      return $id;
     }
     private function nextOption($id,$option='option'){
-      return $this->model->createQuestionOption($id,$option);
+      $this->model->createQuestionOption($id,$option);
     }
 
     public function manageImage(){

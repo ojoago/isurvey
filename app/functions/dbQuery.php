@@ -27,17 +27,35 @@
     $row=$db->single();
     return $db->rowCount() > 0 ? $row : false;
   }
-  // load form question
+  // load all form question
   function loadFormQuestion(){
     $db = new Database;
     $db->query("SELECT id,question,note,type,option_type,path,requires FROM ".QSN_TBL." WHERE fid = ? ");
     $db->bind(1,escapeString($_SESSION['formId']));
     return $db->resultSet();
   }
+
+  // load single question
+  function loadSingleQuestion($id){
+    $db = new Database;
+    $db->query("SELECT id,question,note,type,option_type,path,requires FROM ".QSN_TBL."
+                WHERE id = ? LIMIT 1");
+    $db->bind(1,$id);
+    return $db->resultSet();
+  }
+
   function loadOption($id){
     $db = new Database;
     $db->query("SELECT id,options FROM ".OPN_TBL." WHERE qid = ? ORDER BY created_on ASC");
     $db->bind(1,$id);
     return $db->resultSet();
+  }
+  function aLog($msg){
+    $db = new Database;
+    $db->query("INSERT INTO ".ACTIVITY_LOG_TBL." SET timestamp=:stamp,userId=:id,activity=:msg");
+    $db->bind(':stamp',dateTime());
+    $db->bind(':id',userId());
+    $db->bind(':msg',$msg);
+    $db->execute();
   }
  ?>

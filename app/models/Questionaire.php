@@ -88,6 +88,12 @@
       $this->db->bind(':question',sentenceCase($text));
       return $this->db->execute() ? true : false;
     }
+    public function updateQuestionNote($id,$text){//update question text
+      $this->db->query("UPDATE ".QSN_TBL." SET note=:note WHERE id =:id LIMIT 1");
+      $this->db->bind(':id',$id);
+      $this->db->bind(':note',sentenceCase($text));
+      return $this->db->execute() ? true : false;
+    }
     // make question Compulsory or not
     public function toggleRequired($id,$action){
       $this->db->query("UPDATE ".QSN_TBL." SET requires=:rq WHERE id=:id LIMIT 1");
@@ -95,11 +101,17 @@
       $this->db->bind(':id',$id);
       return $this->db->execute() ? true : false;
     }
-    // change question type 
+    // change question type
     public function changeQuestionType($id,$type){
       $this->db->query("UPDATE ".QSN_TBL." SET option_type=:type WHERE id=:id LIMIT 1");
       $this->db->bind(':type',$type);
       $this->db->bind(':id',$id);
+      return $this->db->execute() ? true : false;
+    }
+    // delete options on change type to none option
+    public function deleteOption($id){
+      $this->db->query("DELETE FROM ".OPN_TBL." WHERE qid =? ");
+      $this->db->bind(1,$id);
       return $this->db->execute() ? true : false;
     }
     public function updateQuestionToImage($data){

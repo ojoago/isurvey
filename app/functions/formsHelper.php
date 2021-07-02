@@ -16,8 +16,6 @@
   }
 
   // function goes here
-
-
   function select($id,$val=''){
     $select='<select class="select changeQuestionType" name="changeType" id="qtype'.$id.'">
       <option disabled selected>Change Question Type</option>
@@ -33,27 +31,22 @@
   }
 
   if(isset($_POST['loadNextQuestion'])){
-    jsonEncode(loadQuestion());
+    jsonEncode(loadQuestion(loadFormQuestion()));
+  }
+  if(isset($_POST['loadAddedQuestion'])){
+    jsonEncode(loadQuestion(loadSingleQuestion(escapeString($_POST['id']))));
+  }
+  if(isset($_POST['reloadOption'])){
+    jsonEncode(loadOptionType(escapeString($_POST['id']),$_POST['type']));
   }
   if(isset($_POST['loadActiveOption'])){
-    jsonEncode(option(escapeString($_POST['id'])));
+    jsonEncode(loadQuestionOption(escapeString($_POST['id'])));
   }
-  function option($id,$option='Option'){
-    $input='
-      <div class="optionContainer" id="optionWrapper_'.$id.'">
-      <input type="radio" name="" value="" disabled>
-      <input type="text" class="inputBox questionOption" id="'.$id.'" value="'.$option.'" placeholder="option">
-      <i class ="fa fa-times-circle removeOption pointer" id="_'.$id.'" title="remove Option" data-bs-toggle="tooltip" data-bs-placement="right"></i> <br>
-      </div>
-    ';
-    return $input;
-  }
+
   // load question and option from Database goes here
-  function loadQuestion(){
+  function loadQuestion($result){
     $fieldset='';
-    foreach(loadFormQuestion() as $row){
-      $id=$row->id;
-      $option_type=$row->option_type;
+    foreach($result as $row){
       $fieldset.='
           <fieldset class="border p-4 m-1 mt-3 questionFieldset" id="fieldset_r'.$row->id.'">
             <div class="card">
@@ -73,11 +66,10 @@
                   </div>
                 </div>
               </div>
-              <div class="card-body">
-                <div id="questionNote">'.$row->note.'</div>
-                ';
+              <div id="questionNote"> <input type ="text" class="questionNote" id="_n_'.$row->id.'" value="'.$row->note.'"></div>
+              <div class="card-body" id="options_'.$row->id.'">';
                 $check=$row->requires=='required' ? 'checked' : '';
-                  $option = loadOptionType($id,$option_type);
+                  $option = loadOptionType($row->id,$row->option_type);
                 $fieldset.=$option;
                 $fieldset.='
               </div>
@@ -96,6 +88,7 @@
     }
     return $fieldset;
   }
+
   function loadOptionType($qid,$type='radio'){
     switch ($type) {
       case 'linear':
@@ -117,12 +110,22 @@
     return $inputType;
   }
   function loadQuestionOption($qid){
-    $option='<div class ="inputType" id="inputType'.$qid.'"></div>';
+    $option='<div class ="inputType" id="inputType'.$qid.'">';
     foreach (loadOption($qid) as $rows) {
       $option.=option($rows->id,$rows->options);
     }
     $option.='
       <input type="radio" name="" value="" disabled> <input type="text" class="createNextOption" id="nextOption'.$qid.'" value="Next Option" readonly>
-    ';
+    </div>';
     return $option;
+  }
+  function option($id,$option='Option'){
+    $input='
+      <div class="optionContainer" id="optionWrapper_'.$id.'">
+      <input type="radio" name="" value="" disabled>
+      <input type="text" class="inputBox questionOption" id="'.$id.'" value="'.$option.'" placeholder="option">
+      <i class ="fa fa-times-circle removeOption pointer" id="_'.$id.'" title="remove Option" data-bs-toggle="tooltip" data-bs-placement="right"></i> <br>
+      </div>
+    ';
+    return $input;
   }

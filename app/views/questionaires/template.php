@@ -6,11 +6,13 @@
   #questions{
     position: relative;
   }
-  #formOptionControl{
+  .formController{
     right: 0 !important;
-    position: absolute;
+    position: fixed;
     z-index: 1;
+    padding: 5px;
   }
+
 </style>
 <div class="container mt-2">
     <div class="card mb-4">
@@ -26,14 +28,17 @@
           <!-- first tab | question -->
           <div class="tab-pane fade in show active" id ="questions">
             <fieldset class="border p-4">
+
+              <div class="formController" id="formController">
+                <div id="nextQuestion"></div>
+                <div class="dropdown-divider"></div>
+                <i class="fa fa-columns mr-1 pointer" id="createSection"> Section</i>
+                <div class="dropdown-divider"></div>
+              </div>
               <legend  class="w-auto small text-center" style="float:center"> <label>Questions</label> </legend>
               <div class="" id="formHeader"></div>
             </fieldset>
-            <div class="" id="nextQuestion"></div>
             <fieldset id="fieldset"></fieldset>
-            <div class="" id="formOptionControl">
-              Controller
-            </div>
           </div>
           <!-- second tab | response -->
           <div class="tab-pane fade in" id="response">
@@ -104,6 +109,10 @@
         }
       });
     }
+    // create form section
+    $('#createSection').click(function(){
+      alert()
+    });
     // change question type
     $(document).on('change','.changeQuestionType',function(){
       var id=$(this).attr('id');
@@ -112,11 +121,29 @@
         url:"<?php echo URLROOT ?>/questionaires/manageForm",
         type:"POST",
         data:{changeQuestionType:true,id:id,type:type},
-        success:function(data){
-          alert(data)
-          alert('write logic to reload question');
-        //  $('#questionHeader').html(data);
+        success:function(id){
+          reloadQuestion(id,type)
         }
+      });
+    });
+    function reloadQuestion(qid,type){
+      $.ajax({
+        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        type:"POST",
+        data:{reloadOption:true,id:qid,type:type},
+        success:function(data){
+          $('#options_'+$.trim(qid)).html(data);
+        }
+      });
+    }
+    $(document).on('change','.questionNote',function(){
+      var id =$(this).attr('id');
+      var txt=$(this).val();
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{updateQuestionNote:true,id:id,note:txt},
+        success:function(){}
       });
     });
     nextQuestionController('nextQuestion');
@@ -130,7 +157,6 @@
         }
       });
     }
-
     // create question options
     $(document).on('click','.createNextOption',function(){
       id=$(this).attr('id');
@@ -140,32 +166,31 @@
         dataType:'JSON',
         data:{createNextOption:true,id:id},
         success:function(data){
-          loadMoreOption(data.id,data.oid);
+          loadMoreOption(data.id);
         }
       });
     });
-    // load more option on create or reload
-
-    function loadMoreOption(qid,oid){//qid =question id, oid option id
+    // reload question option on create
+    function loadMoreOption(qid){//qid =question id, oid option id
       $.ajax({
         url:"<?php echo URLROOT ?>/functions/formsHelper.php",
         type:"POST",
-        data:{loadActiveOption:true,id:oid},
+        data:{loadActiveOption:true,id:qid},
         success:function(data){
-          $('#inputType'+qid).append(data);
+          $('#inputType'+qid).html(data);
         }
       });
     }
     loadFieldSet()
     // adding more question
-    function loadFieldSet(type='radio'){
+    function loadFieldSet(){
       $.ajax({
         url:"<?php echo URLROOT ?>/functions/formsHelper.php",
         type:"POST",
-        data:{loadNextQuestion:true,type:type},
+        data:{loadNextQuestion:true},
         success:function(data){
           $('#fieldset').html(data);
-          scrollBottom()
+          //scrollBottom()
         }
       });
     }
@@ -179,11 +204,22 @@
         url:"<?php echo URLROOT ?>/questionaires/manageForm",
         type:"POST",
         data:{createMoreQuestion:true,type:type},
-        success:function(){
-          loadFieldSet()
+        success:function(id){
+          loadAddedQuestion(id)
         }
       });
     });
+    function loadAddedQuestion(id){
+      $.ajax({
+        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        type:"POST",
+        data:{loadAddedQuestion:true,id:id},
+        success:function(data){
+          $('#fieldset').append(data);
+           document.getElementById('fieldset_r'+id).scrollIntoView({behavoir :"smooth"});
+        }
+      });
+    }
     $(document).on('change','.questionTitle',function(){
       var id=$(this).attr('id');
       var qs=$(this).val();
@@ -240,14 +276,16 @@
     // remove question
     $(document).on('click','.removeQuestion',function(){
       id=$(this).attr('id');
-      $.ajax({
-        url:"<?php echo URLROOT ?>/questionaires/manageForm",
-        type:"POST",
-        data:{deleteQuestionAndOption:true,id:id},
-        success:function(data){
-          $('#fieldset'+id).remove();
-        }
-      });
+      if(confirm('delete question')){
+        $.ajax({
+          url:"<?php echo URLROOT ?>/questionaires/manageForm",
+          type:"POST",
+          data:{deleteQuestionAndOption:true,id:id},
+          success:function(data){
+            $('#fieldset'+id).remove();
+          }
+        });
+      }
     });
     $(document).on('change','.questionImage',function(){
       var id=$(this).attr('id');
@@ -272,7 +310,6 @@
       var id=$(this).attr('id');
       var id =$(this).find('.questionController').attr('id');
       nextQuestionController(id)
-
     });
   })
 </script>

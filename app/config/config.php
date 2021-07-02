@@ -8,6 +8,7 @@
   define('SITENAME','iSurvey'); //app name
   define('APPVERSION','0.1');//app version
   define('USER_TBL','users_tbl');//login table
+  define('ACTIVITY_LOG_TBL','activity_log');
   define('FMS_TBL','forms');
   define('QSN_TBL','questions');
   define('RESPONSE_TBL','response');
