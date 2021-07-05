@@ -31,7 +31,7 @@
   }
 
   if(isset($_POST['loadNextQuestion'])){
-    jsonEncode(loadQuestion(loadFormQuestion()));
+    jsonEncode(wrapSection(loadFormSection($_SESSION['formId'])));
   }
   if(isset($_POST['loadAddedQuestion'])){
     jsonEncode(loadQuestion(loadSingleQuestion(escapeString($_POST['id']))));
@@ -42,7 +42,22 @@
   if(isset($_POST['loadActiveOption'])){
     jsonEncode(loadQuestionOption(escapeString($_POST['id'])));
   }
+  function wrapSection($result){
+    $section='';
+    foreach($result as $row){
+      $dsc=$row->dsc=='' ? '' :
+      '<input type ="text" value="'.$row->dsc.'" class="inputBox form-control form-content-sm sectionHeader" id="s_'.$row->id.'">';
+      $section .='
+        <fieldset class ="border p-2 m-1 mt-3 sectionWrapper" id="section_'.$row->id.'">
+        <legend class="w-auto small">'.$dsc.'</legend>
+        '.loadQuestion(loadSectionQuestion($row->id)).'
+        </fieldset>
+      ';
+    }
+    return $section;
+  }
 
+  // load section question
   // load question and option from Database goes here
   function loadQuestion($result){
     $fieldset='';
@@ -69,6 +84,7 @@
               <div id="questionNote"> <input type ="text" class="questionNote" id="_n_'.$row->id.'" value="'.$row->note.'"></div>
               <div class="card-body" id="options_'.$row->id.'">';
                 $check=$row->requires=='required' ? 'checked' : '';
+                $comment=$row->comments=='true' ? 'checked' : '';
                   $option = loadOptionType($row->id,$row->option_type);
                 $fieldset.=$option;
                 $fieldset.='
@@ -80,6 +96,7 @@
                     |
                     required
                     <input type="checkbox" class="compulsoryCheck" '.$check.' id="required'.$row->id.'" data-toggle="tooltip" title="Compulsory ?">
+                    Enable Comments<input type="radio" class="compulsoryCheck" '.$comment.' id="comments'.$row->id.'" data-toggle="tooltip" title="Comments ?">
                 </div>
               </div>
             </div>
@@ -129,3 +146,4 @@
     ';
     return $input;
   }
+// creating form stop here

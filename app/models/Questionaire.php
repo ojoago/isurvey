@@ -51,10 +51,17 @@
     }
     // quick question end here
 
+    // load Projects/forms
+    public function loadALLForms(){
+      $this->db->query("SELECT id,title FROM ".FMS_TBL." WHERE userId = ? ORDER BY created_on DESC");
+      $this->db->bind(1,userId());
+      return $this->db->resultSet();
+    }
     // creating iSurvey Projects/form goes here
     public function saveForm($data){
       return empty($data['id']) ? $this->createForm($data) : $this->updateForm($data);
     }
+    // crate new form
     private function createForm($data){
       $this->db->query("INSERT INTO ".FMS_TBL." SET userId=:userId,title=:title,
                   note=:dsc,created_on=:date,updated_on=:date");
@@ -64,6 +71,7 @@
       $this->db->bind(':date',dateTime());
       return $this->db->execute() ? lastID() : false;
     }
+    // update form info
     private function updateForm($data){
       $this->db->query("UPDATE ".FMS_TBL." SET title=:title,
                   note=:dsc,updated_on=:date WHERE id =:id");
@@ -73,13 +81,32 @@
       $this->db->bind(':date',dateTime());
       return $this->db->execute() ? $data['id'] : false;
     }
+    // create form section
+    public function createSection($id,$dsc='',$name="section"){
+      $this->db->query("INSERT INTO ".FMS_STN_TBL." SET fid=:fid,section=:sec,dsc=:dsc");
+      $this->db->bind(':fid',$id);
+      $this->db->bind(':sec',$name);
+      $this->db->bind(':dsc',$dsc);
+      return $this->db->execute() ? lastID() : false;
+    }
+    // update section description
+    public function updateSection($id,$dsc='',$name="section"){
+      $this->db->query("UPDATE ".FMS_STN_TBL." SET section=:sec,dsc=:dsc WHERE id=:id LIMIT 1");
+      $this->db->bind(':id',$id);
+      $this->db->bind(':sec',$name);
+      $this->db->bind(':dsc',$dsc);
+      return $this->db->execute() ? true : false;
+    }
+
+
     public function createFormQuestion($data){
       $this->db->query("INSERT INTO ".QSN_TBL." SET fid=:fid,question=:question,
-                        type=:type,option_type=:option_type");
+                        type=:type,option_type=:option_type,sid=:sid");
       $this->db->bind(':fid',$data['formId']);
       $this->db->bind(':question',$data['question']);
       $this->db->bind(':type',$data['type']);
       $this->db->bind(':option_type',$data['option_type']);
+      $this->db->bind(':sid',$data['sectionId']);
       return $this->db->execute() ? lastID() : false;
     }
     public function updateFormQuestion($id,$text){//update question text

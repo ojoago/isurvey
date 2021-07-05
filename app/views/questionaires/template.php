@@ -34,6 +34,10 @@
                 <div class="dropdown-divider"></div>
                 <i class="fa fa-columns mr-1 pointer" id="createSection"> Section</i>
                 <div class="dropdown-divider"></div>
+                <a href="<?php echo URLROOT ?>/questionaires/template"><i class="fa fa-question-circle mr-1 pointer"></i>New Form</a>
+                <div class="dropdown-divider"></div>
+                <a href="<?php echo URLROOT .'/questionaires/response/'.@$_SESSION['formId'];?>">Preview</a>
+                <div class="dropdown-divider"></div>
               </div>
               <legend  class="w-auto small text-center" style="float:center"> <label>Questions</label> </legend>
               <div class="" id="formHeader"></div>
@@ -111,7 +115,26 @@
     }
     // create form section
     $('#createSection').click(function(){
-      alert()
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{createFormSection:true},
+        success:function(data){
+          //loadFormHeader(data);
+        }
+      });
+    });
+
+    // update section description
+    $(document).on('change','.sectionHeader',function(){
+      var txt=$(this).val();
+      var id=$(this).attr('id');
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{updateFormSection:true,id:id,txt:txt},
+        success:function(){}
+      });
     });
     // change question type
     $(document).on('change','.changeQuestionType',function(){
@@ -362,6 +385,7 @@
     </div>
   </div>
 </div>
+
 <script>
   $(document).ready(function(){
     $('#quickSurveyBtn').click(function(){

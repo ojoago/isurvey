@@ -9,7 +9,8 @@
   define('APPVERSION','0.1');//app version
   define('USER_TBL','users_tbl');//login table
   define('ACTIVITY_LOG_TBL','activity_log');
-  define('FMS_TBL','forms');
+  define('FMS_TBL','forms');//form
+  define('FMS_STN_TBL','form_section');//form section
   define('QSN_TBL','questions');
   define('RESPONSE_TBL','response');
   define('OPN_TBL','options');

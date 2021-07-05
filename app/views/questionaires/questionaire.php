@@ -1,16 +1,19 @@
 <?php include_once(APPROOT.'/views/inc/header.php');?>
 <div class="container-fluid mt-2">
  <div class="row">
-   <div class="col-md-4">
+   <div class="col-md-6">
+     Total FORM <?php echo count($data['forms']) ?>
+      <p>
+     <?php foreach($data['forms'] as $row): ?>
+      <a href="<?php echo URLROOT ?>/questionaires/edit/<?php echo $row->id ?>" class="m-2 mb-2"><button type= "button" class="btn btn-primary"><?php echo $row->title ?> </button></a>
+     <?php endforeach; ?>
+   </p>
+   </div>
+   <div class="col-md-6">
      <p> <a href="<?php echo URLROOT ?>/questionaires/template"><button type= "button" class="btn btn-primary">CREATE NEW PROJECT </button></a> </p>
-     Total PROJECT 3
      <p><button type= "button" data-bs-toggle="modal" data-bs-target="#quickSurveyModal" class="btn iSurveyColor">Quick Question</button></p>
      <p><button type= "button" class="btn iSurveyColor"> Blank Form</button></p>
      <p><button type= "button" class="btn iSurveyColor"> Form Template</button></p>
-
-   </div>
-   <div class="col-md-8">
-     
      <!-- <b class="text-info">share iSurvey with friends ON SOCIAL Media and earn</b><br>
      <a href="https://www.facebook.com/sharer/sharer.php?u=isurvey.com/guests/resgister/" target="_blank">
 		<i class="fa fw fa-facebook-square fa-share fa-2x" data-toggle="tooltip" data-placement="top" title="Share on facebook!"></i></a>

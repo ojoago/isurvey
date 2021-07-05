@@ -5,21 +5,29 @@
     }
   function index($id=0){
       $data=['user'=>'','questionaire'=>''];
-      // if($_SERVER['REQUEST_METHOD']=='POST'){}else{
-      //
-      // }
-      // if(isNum(escapeString($id))){
-      //   $data['user']=$this->qModel->accountDetail($id);
-      //   $data['questionaire']=$this->qModel->loadQuestionaire($id);
-      // }else{
-      //   $data=[];
-      // }
+      $data['forms']=$this->model->loadALLForms();
       $this->view('questionaires/questionaire',$data);
     }
 
     public function template($tmp=''){
-      $data=[];
+      unset($_SESSION['formId']);
+      redirect('questionaires/edit/'.$id);
+      $this->view('questionaires/template');
+    }
+    public function edit($tmp=''){
+      if(!empty($tmp) and isNum($tmp)){
+        $data['id']=$_SESSION['formId']=escapeString($tmp);
+      }
       $this->view('questionaires/template',$data);
+    }
+
+    public function response($id=''){
+      if(!empty($id) and isNum($id)){
+        $_SESSION['loadresponseById']=escapeString($id);
+      }else{
+        unset($_SESSION['loadresponseById']);
+      }
+      $this->view('questionaires/response');
     }
     public function quickQuestion(){
       if(isset($_POST['submitQuickQuestion'])){
@@ -70,9 +78,19 @@
           ];
           $_SESSION['formId']=$this->model->saveForm($data);
           $_SESSION['number']=0;
+          $_SESSION['sectionId']=$this->model->createSection($_SESSION['formId']);
           $this->nextQuestion();
         }
-        echo $_SESSION['formId'];
+        jsonEncode($_SESSION['formId']);
+      }
+      // create form section
+      if(isset($_POST['createFormSection'])){
+        ajaxControl();
+        $_SESSION['sectionId']=$this->model->createSection($_SESSION['formId']);
+      }
+      if(isset($_POST['updateFormSection'])){
+        ajaxControl();
+        $this->model->updateSection(str_replace('s_','',escapeString($_POST['id'])),escapeString($_POST['txt']));
       }
       // update form name and description
       if(isset($_POST['updateFormInfo'])){
@@ -148,6 +166,7 @@
         'option_type'=>$option,
         'question'=>'Question '.++$_SESSION['number'],
         'formId'=>$_SESSION['formId'],
+        'sectionId'=>$_SESSION['sectionId'],
       ];
       $id=$this->model->createFormQuestion($data);
       $this->nextOption($id);

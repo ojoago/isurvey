@@ -18,3 +18,4 @@
     require_once('functions/dropdown.php');
     require_once('functions/loadmodal.php');
     require_once('functions/formsHelper.php');
+    require_once('functions/responseHelper.php');
