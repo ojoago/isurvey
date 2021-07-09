@@ -89,6 +89,11 @@
       $this->db->bind(':dsc',$dsc);
       return $this->db->execute() ? lastID() : false;
     }
+    public function getLastSectionId($id){
+      $this->db->query("SELECT id FROM ".FMS_STN_TBL." WHERE fid=? ORDER BY id DESC LIMIT 1");
+      $this->db->bind(1,$id);
+      return @$this->db->single()->id;
+    }
     // update section description
     public function updateSection($id,$dsc='',$name="section"){
       $this->db->query("UPDATE ".FMS_STN_TBL." SET section=:sec,dsc=:dsc WHERE id=:id LIMIT 1");
@@ -125,6 +130,13 @@
     public function toggleRequired($id,$action){
       $this->db->query("UPDATE ".QSN_TBL." SET requires=:rq WHERE id=:id LIMIT 1");
       $this->db->bind(':rq',strtolower($action));
+      $this->db->bind(':id',$id);
+      return $this->db->execute() ? true : false;
+    }
+    // enalbe comments on question
+    public function toggleComments($id,$action){
+      $this->db->query("UPDATE ".QSN_TBL." SET comments=:cm WHERE id=:id LIMIT 1");
+      $this->db->bind(':cm',strtolower($action));
       $this->db->bind(':id',$id);
       return $this->db->execute() ? true : false;
     }
@@ -171,6 +183,24 @@
       $this->db->query("DELETE FROM ".OPN_TBL." WHERE id =? LIMIT 1");
       $this->db->bind(1,str_replace('_','',$id));
       return $this->db->execute() ? true : false;
+    }
+
+    // insert response
+    public function postResponse($id,$val,$cmt=''){
+      $this->db->query("INSERT INTO ".RESPONSE_TBL." SET oid=:id,answer=:an,comment=:cmt,respond_on=:date");
+      $this->db->bind(':id',$id);
+      $this->db->bind(':an',$val);
+      $this->db->bind(':cmt',$cmt);
+      $this->db->bind(':date',dateTime());
+      return $this->db->execute() ? true : false;
+    }
+
+    public function loadResponse($id){
+      $this->db->query("SELECT q.question,o.options,COUNT(r.answer) AS count,r.comment FROM
+                        ".QSN_TBL." q LEFT JOIN ".OPN_TBL." o ON q.id=o.qid
+                        LEFT JOIN ".RESPONSE_TBL." r ON o.id=r.oid WHERE q.fid= ? GROUP BY o.options,r.answer ORDER BY q.id ASC");
+      $this->db->bind(1,$id);
+      return $this->db->resultSet();
     }
     public function genQuery($data){
 

@@ -47,20 +47,97 @@
           <!-- second tab | response -->
           <div class="tab-pane fade in" id="response">
             <fieldset class="border p-4">
-              <legend  class="w-auto small"> Response</legend>
+              <legend  class="w-auto small"> Response</legend><br>
+              <button type="button" id="exportPDF" class="btn btn-warning btn-sm exportBtn">PDF</button>
+              <button type="button" id="exportCSV" class="btn btn-success btn-sm exportBtn">CSV</button>
+              <div class="table table-responsive" id="resultTable">
 
+                  <div id="tableContent"></div>
+
+              </div>
             </fieldset>
           </div>
         </div>
       </div>
     </div>
 </div>
+<script src="<?php echo URLROOT;?>/js/custom/jquery-3.3.1.slim.min.js"></script>
 <?php include_once(APPROOT.'/views/inc/footer.php');?>
+<script src="<?php echo URLROOT;?>/js/custom/jspdf.min.js"></script>
+<script src="<?php echo URLROOT;?>/js/custom/jspdf.plugin.autotable.min.js"></script>
+<script src="<?php echo URLROOT;?>/js/custom/tableHTMLExport.js"></script>
+
 <script>
   $(document).ready(function(){
-    formHeader(0)
+    loadResponse();
+    function loadResponse(){
+      $.ajax({
+        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        type:"POST",
+        data:{loadResponse:true},
+        success:function(data){
+          $('#tableContent').html(data);
+        }
+      });
+    }
+
+    // export result
+    $('#exportPDF').click(function(){
+      $('#resultTable').tableHTMLExport({
+        type:'pdf',
+        filename:'sample.pdf'
+      });
+    });
+    $('#exportCSV').click(function(){
+      exportTableToCSV('simpxxxx.csv');
+    });
+    function exportTableToCSV(simp) {
+    var csv = [];
+    var rows = document.querySelectorAll("table tr");
+
+    for (var i = 0; i < rows.length; i++) {
+        var row = [], cols = rows[i].querySelectorAll("td, th");
+
+        for (var j = 0; j < cols.length; j++)
+            row.push(cols[j].innerText);
+
+        csv.push(row.join(","));
+    }
+
+    // Download CSV file
+    downloadCSV(csv.join("\n"), simp);
+}
+function downloadCSV(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    // CSV file
+    csvFile = new Blob([csv], {type: "text/csv"});
+
+    // Download link
+    downloadLink = document.createElement("a");
+
+    // File name
+    downloadLink.download = filename;
+
+    // Create a link to the file
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    // Hide download link
+    downloadLink.style.display = "none";
+
+    // Add the link to DOM
+    document.body.appendChild(downloadLink);
+
+    // Click download link
+    downloadLink.click();
+}
+    // response stop here
+
+
+    formHeader()
     // create new form if not Exist
-    function formHeader(id){
+    function formHeader(id=0){
       $.ajax({
         url:"<?php echo URLROOT ?>/questionaires/manageForm",
         type:"POST",
@@ -294,6 +371,20 @@
         success:function(){
           showAlert('State Toggled');
         }
+      });
+    });
+    $(document).on('change','.enableComment',function(){
+      var id=$(this).attr('id');
+      if($(this).prop('checked')){
+        var action='enable';
+      }else {
+        var action='';
+      }
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        data:{enableComment:true,id:id,action:action},
+        success:function(d){}
       });
     });
     // remove question

@@ -154,7 +154,7 @@
          }
          $ret .= $letter;
      }
-     return $ret;
+     return ucfirst($ret);
    }
    function ajaxControl(){
      isLoggedIn() ?: exit();

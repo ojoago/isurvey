@@ -23,9 +23,9 @@
   margin-left: auto;
   margin-right: auto;
 }
-/* .head-logo{
+.head-logo{
   padding: 3px;
-  padding-bottom: 3rem;
+  /* padding-bottom: 3rem; */
   margin: 0 auto;
 }
 .head-logo{
@@ -36,8 +36,8 @@
 .head-logo{
   box-shadow:  6px 6px 10px 0 rgba(255, 255,255, 0.2),
      -6px -6px 10px 0 rgba(2, 0,5, 0.5);
-} */
-/* .head-logo> #logo{
+}
+.head-logo> #logo{
   width: 100%;
   height: auto;
 }
@@ -45,12 +45,12 @@
   width: 100px;
   height: auto;
   margin: 0 auto;
-  background-color: #fff;
-  box-shadow: 0px 0px 2px #5f5f5f,
+  background-color:transparent;
+  /* box-shadow: 0px 0px 2px #5f5f5f,
               0px 0px 5px #cf4747,
               8px 8px 15px #ff5f5f,
-              -8px -8px 15px #cf4747;
-} */
+              -8px -8px 15px #cf4747; */
+}
 #logo{
   width: 100%;
   margin: 0 auto;
@@ -162,4 +162,4 @@ box-sizing: border-box;
                     </div>
                 </form>
 
-<?php include_once(APPROOT.'/views/inc/footer.php');?>
+<?php include_once(APPROOT.'/views/includes/footer.php');?>

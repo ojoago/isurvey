@@ -84,7 +84,7 @@
               <div id="questionNote"> <input type ="text" class="questionNote" id="_n_'.$row->id.'" value="'.$row->note.'"></div>
               <div class="card-body" id="options_'.$row->id.'">';
                 $check=$row->requires=='required' ? 'checked' : '';
-                $comment=$row->comments=='true' ? 'checked' : '';
+                $comment=$row->comments=='enable' ? 'checked' : '';
                   $option = loadOptionType($row->id,$row->option_type);
                 $fieldset.=$option;
                 $fieldset.='
@@ -96,7 +96,7 @@
                     |
                     required
                     <input type="checkbox" class="compulsoryCheck" '.$check.' id="required'.$row->id.'" data-toggle="tooltip" title="Compulsory ?">
-                    Enable Comments<input type="radio" class="compulsoryCheck" '.$comment.' id="comments'.$row->id.'" data-toggle="tooltip" title="Comments ?">
+                    Enable Comments<input type="radio" class="enableComment" '.$comment.' id="comments'.$row->id.'" data-toggle="tooltip" title="Comments ?">
                 </div>
               </div>
             </div>
@@ -121,25 +121,25 @@
         $inputType='<textarea type="text" name="paragraph" id="paragraph" placeholder ="Paragraph" disabled></textarea>';
       break;
       default:
-      $inputType=loadQuestionOption($qid);
+      $inputType=loadQuestionOption($qid,$type);
       break;
     }
     return $inputType;
   }
-  function loadQuestionOption($qid){
+  function loadQuestionOption($qid,$type='radio'){
     $option='<div class ="inputType" id="inputType'.$qid.'">';
     foreach (loadOption($qid) as $rows) {
-      $option.=option($rows->id,$rows->options);
+      $option.=option($rows->id,$rows->options,$type);
     }
     $option.='
-      <input type="radio" name="" value="" disabled> <input type="text" class="createNextOption" id="nextOption'.$qid.'" value="Next Option" readonly>
+      <input type="'.$type.'" name="" value="" disabled> <input type="text" class="createNextOption" id="nextOption'.$qid.'" value="Next Option" readonly>
     </div>';
     return $option;
   }
-  function option($id,$option='Option'){
+  function option($id,$option='Option',$type){
     $input='
       <div class="optionContainer" id="optionWrapper_'.$id.'">
-      <input type="radio" name="" value="" disabled>
+      <input type="'.$type.'" name="" value="" disabled>
       <input type="text" class="inputBox questionOption" id="'.$id.'" value="'.$option.'" placeholder="option">
       <i class ="fa fa-times-circle removeOption pointer" id="_'.$id.'" title="remove Option" data-bs-toggle="tooltip" data-bs-placement="right"></i> <br>
       </div>
@@ -147,3 +147,47 @@
     return $input;
   }
 // creating form stop here
+// view response goes here
+if(isset($_POST['loadResponse'])){
+  jsonEncode(loopQuestionResponse(loadFormQuestionOnResponse()));
+}
+function loopQuestionResponse($result){
+  $table='
+      <table class="table table-hover table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>S/N</th>
+        <th>Question</th>
+        <th>Options</th>
+
+      </tr>
+    </thead>
+    <tbody>
+  ';
+  $n=0;foreach ($result as $row) {
+    $table.='
+      <tr>
+        <td>'.++$n.'</td>
+        <td>'.$row->question.'</td>
+        <td>'.loopResponse(loadOption_Response($row->id)).'</td>
+      </tr>
+    ';
+  }
+  $table.='</tbody></table>';
+  return $table;
+}
+function loopResponse($result){
+  $rows='<table class="table " width="100%">';
+  foreach($result as $row) {
+    $rows.='
+      <tr>
+        <td>'.$row->answer.'</td>
+        <td>'.$row->count.'</td>
+        <td>'.$row->comment.'</td>
+
+      </tr>
+    ';
+  }
+  $rows.='</table>';
+  return $rows;
+}

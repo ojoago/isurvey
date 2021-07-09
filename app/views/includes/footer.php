@@ -1,92 +1,61 @@
-<style media="screen">
-/* loader */
-.overlay{
-  display: none;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  z-index: 10;
-  opacity: 0.7;
-}
-.loader{
-  display: none;
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border:10px solid #333;
-  position: relative;
-  margin: 0 auto;
-  top:30%;
-  animation:loader 2s linear infinite;
-}
-@keyframes loader{
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    transform:rotate(360deg);
-  }
-}
-.loader:after{
-  content: "";
-    width: 35px;
-    height: 35px;
-    background: #333;
-    position: absolute;
-    border-radius: 50%;
-    top: -20px;
-    left: 55px;
-}
-.loader:before{
-  content: "";
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 15px solid #333;
-    position: absolute;
-    transform: rotate(-90deg);
-    top: -10px;
-    left: 39px;
-}
-/* loader stop here */
-</style>
+
+
+	<u height= "20"><p class = "pull-right"><b>Committed to excel</u><span class = "red"><u>lent service offering </u></span></b></p>
+	<div class ="footer">
+		<div class = "container-fluid">
+			<div class = "row">
+				<div class = "col-md-3">
+					<span class= "glyphicon glyphicon-phone-alt"></span> Give us a call <P>09079585000</P>
+					 <!-- <span class= "fa fa-facebook-square"></span><span> Facebook</span><p>facebook.com/iSurvey</p> -->
+				</div>
+				<div class = "col-md-6">
+					<p><i class="fa fa-thumbs-up"></i> please help us improve... feel free to send suggestion and critics by clicking the red button below <i class="fa fa-thumb-tack"></i> </p>
+					<a href ="mailto:isurvey@gmail.com?subject=me&body= "><input type="button" class="btn btn-success createAccount" value="TELL us how to improve"></a>
+				</div>
+					<div class = "col-md-3">
+						<span class= "glyphicon glyphicon-envelope"></span> Mail Us<p>isurvey@gmail.com</p>
+						 <p>info@isurvey.com</p>
+						<!--<span class= "fa fa-twitter"></span> <span>Twitter</span><p>@iSurvey</p>-->
+					</div>
+
+			</div>
+			<br>
+			<hr>
+      <center class="white"><a href="<?php echo URLROOT;?>"> HOME</a>
+				<a href="<?php echo URLROOT.'/pages/about';?>"> ABOUT</a>
+				<a href="<?php echo URLROOT.'/pages/help';?>"> HELP</a>
+				<a href="<?php echo URLROOT.'/guests/login';?>"> LOGIN</a>
+				<a href="<?php echo URLROOT.'/guests/index';?>"> SIGN UP</a></center>
+		</div>
+	</div>
 </div>
-        <i class="fa fa-arrow-circle-up fa-2x" id="backToTop"  title="Back to top" data-placement="top"></i>
-        <footer class="py-4 bg-light mt-auto bg-dark text-white">
-            <div class="container-fluid">
-                <div class="d-flex align-items-center justify-content-between small">
-                    <div class="text-white ml-4"> &copy; <?php echo SITENAME ?>. 2020</div>
-                    <div class="px-2">
-                        <a href="#" class="text-white">DEVELOPED BY</a>
-                        &middot;
-                        <a href="#"  class="text-white">ELEVATE TECHIE</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </div>
-</div>
-</div>
-<div class="wait overlay">
-	<div class="loader"></div>
-</div>
-  <?php include_once(APPROOT . '/views/inc/modals.php');?>
-<script src="<?php echo URLROOT;?>/js/jquery2.js"></script>
-<script src="<?php echo URLROOT;?>/js/jquery-3.4.1.min.js"></script>
-<script src="<?php echo URLROOT; ?>/js/jquery-ui.js"></script>
-<script src="<?php echo URLROOT;?>/js/bootstrap.min.js"></script>
-<script src="<?php echo URLROOT;?>/js/bootstrap.bundle.min.js"></script>
-<script src="<?php echo URLROOT;?>/js/bootstrap.bundle.min.js"></script>
-<script src="<?php echo URLROOT;?>/js/sidebars.js"></script>
-<script src="<?php echo URLROOT;?>/js/scripts.js"></script>
-<script src="<?php echo URLROOT;?>/js/select2.min.js"></script>
-<script src="<?php echo URLROOT; ?>/js/printThis.js"></script>
-<script src="<?php echo URLROOT;?>/js/main.js"></script>
-  <script type="text/javascript">
-      //select 2
-      $(document).ready(function(e) {
-          $('select').select2();
-      });
-  </script>
+
+<button  id="backToTop" title="Go to top">Top</button>
+	<footer id = "footer">
+	<small>
+		Copyright &copy  2020 <span>All Right Reserve</span> ELEVATE TECHIE | iSurvey is a platform designed and developed by <a href="www.elevate.com">ELEVATE TECHIE</a>.
+	</small>
+	</footer>
+  <script src="<?php echo URLROOT;?>/js/jquery2.js"></script>
+  <script src="<?php echo URLROOT;?>/js/jquery-3.4.1.min.js"></script>
+  <script src="<?php echo URLROOT;?>/js/popper.min.js"></script>
+  <script src="<?php echo URLROOT;?>/js/bootstrap.min.js"></script>
+  <script src="<?php echo URLROOT;?>/js/select2.min.js"></script>
+  <script src="<?php echo URLROOT;?>/js/main.js"></script>
+	<script src="<?php echo URLROOT;?>/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="<php echo URLROOT;?>/fontawesome/js/font-awesome.min.js"></script> -->
+	<script>
+			// When the user scrolls down 20px from the top of the document, show the button
+		window.onscroll = function() {scrollFunction()};
+
+		function scrollFunction() {
+			if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+				document.getElementById("backToTop").style.display = "block";
+			} else {
+				document.getElementById("backToTop").style.display = "none";
+			}
+		}
+
+		// When the user clicks on the button, scroll to the top of the document
+
+	</script>

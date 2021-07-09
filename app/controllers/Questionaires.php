@@ -10,17 +10,27 @@
     }
 
     public function template($tmp=''){
-      unset($_SESSION['formId']);
-      redirect('questionaires/edit/'.$id);
-      $this->view('questionaires/template');
+      if(empty($tmp)){
+        unset($_SESSION['formId']);
+        unset($_SESSION['sectionId']);
+      }
+      // create new form if session not set
+      $this->manageForm();
+      redirect('questionaires/edit/'.$_SESSION['formId']);
+      // $this->view('questionaires/template');
     }
     public function edit($tmp=''){
+      $data='';
       if(!empty($tmp) and isNum($tmp)){
-        $data['id']=$_SESSION['formId']=escapeString($tmp);
+        $_SESSION['formId']=escapeString($tmp);
+        $_SESSION['sectionId']=$this->model->getLastSectionId($_SESSION['formId']);
+        $data=$this->loadResponse($_SESSION['formId']);
       }
       $this->view('questionaires/template',$data);
     }
-
+    private function loadResponse($id){
+      return $this->model->loadResponse($id);
+    }
     public function response($id=''){
       if(!empty($id) and isNum($id)){
         $_SESSION['loadresponseById']=escapeString($id);
@@ -144,6 +154,10 @@
         ajaxControl();
         $this->model->toggleRequired(str_replace('required','',escapeString($_POST['id'])),escapeString($_POST['action']));
       }
+      if(isset($_POST['enableComment'])){
+        ajaxControl();
+        $this->model->toggleComments(str_replace('comments','',escapeString($_POST['id'])),escapeString($_POST['action']));
+      }
       // change question type
       if(isset($_POST['changeQuestionType'])){
         ajaxControl();
@@ -185,5 +199,45 @@
       ];
       $this->model->updateQuestionToImage($data);
       extractImg($data['path'],$_FILES['file']['tmp_name'],'questionImages');
+    }
+    public function formSubmission(){
+      if(isset($_POST['submitForm'])){
+        parse_str($_POST['form'],$_POST);
+        // print_r($_POST);die();
+        $comment=@$_POST['comment'];
+        $check=$_POST['check'];
+        unset($_POST['comment']);
+        unset($_POST['check']);
+        $l=0;
+        foreach($_POST as $key => $val) {
+          if(is_array($comment)){
+            foreach($comment as $k => $cmt){
+              if($key==$k){
+                $this->model->postResponse($k,$val,$cmt);
+                $l=$k;
+              }
+            }
+          }
+          if($l==$key)
+            continue;
+          $this->model->postResponse($key,$val);
+        }
+        if(is_array($check)){
+          $this->loopCheckBox($check);
+        }
+        echo 'success';
+      }
+
+    }
+
+    private function loopCheckBox($array){
+      foreach($array AS $key => $val){
+        $this->loopObject($key,$val);
+      }
+    }
+    private function loopObject($id,$obj){
+      foreach($obj as $val){
+        $this->model->postResponse($id,$val);
+      }
     }
   }

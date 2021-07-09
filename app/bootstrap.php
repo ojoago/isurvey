@@ -19,3 +19,4 @@
     require_once('functions/loadmodal.php');
     require_once('functions/formsHelper.php');
     require_once('functions/responseHelper.php');
+    include_once('helpers/pullHelper.php');

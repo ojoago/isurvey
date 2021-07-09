@@ -25,6 +25,9 @@
 		e.preventDefault();
 	   $('html, body').animate({scrollTop:0},'100');
 	});
+  $('.btn-close,.modalClose').click(function(){
+    $('.modalForm')[0].reset();
+  });
 	// window.onscroll = function() {scrollFunction()};
 	// 	function scrollFunction() {
 	// 		if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {

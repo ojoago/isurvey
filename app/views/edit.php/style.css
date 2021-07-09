@@ -141,26 +141,10 @@ header >nav{
 	background:#19B3D3 !important;
 	color: #fff !important;
 }
-.iSurveyText{
-	color: #19B3D3 !important;
-}
-.redColor{
-	color: #c74c3c !important;
-}
 .sidebar-footer{
 	color: #fff;
 	padding: 10px;
 	bottom: 0;
-}
-/* template page */
-.questionImageDisplay{
-	width: 30px;
-}
-.questionImageDisplay:hover{
-	width: 200px;
-	position: absolute;
-	z-index: 1;
-	float: center;
 }
 /* index page */
 .overlay{
@@ -247,7 +231,7 @@ header >nav{
 	/* margin-top:30px; */
 }
 /* back to top button */
-#backToTop{
+#myBtn{
 	display: none; /* Hidden by default */
 	position: fixed; /* Fixed/sticky position */
 	bottom: 20px; /* Place the button at the bottom of the page */
@@ -266,7 +250,7 @@ header >nav{
 	opacity:0.4;
 }
 
-#backToTop:hover {
+#myBtn:hover {
   background-color: #d64c3a; /* Add a dark-grey background on hover */
 	color:#fff;
 	opacity:1;
@@ -318,7 +302,7 @@ header >nav{
 	.page-content{
 		margin: 0;
 	}
-	#backToTop{
+	#myBtn{
 		bottom: 20px; /* Place the button at the bottom of the page */
 		right: 10px; /* Place the button 30px from the right */
 	}

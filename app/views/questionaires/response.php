@@ -20,5 +20,20 @@
        }
      });
    }
+   // submit response
+   $(document).on('click','#responseFormBtn',function(){
+     var form=$('#responseForm');
+     $.ajax({
+       url:"<?php echo URLROOT ?>/questionaires/formSubmission",
+       type:"POST",
+       data:{submitForm:true,form:form.serialize()},
+       success:function(msg){
+         if(msg=='success'){
+           $('#responseForm')[0].reset();
+         }
+         console.log(msg);
+       }
+     });
+   });
  });
 </script>

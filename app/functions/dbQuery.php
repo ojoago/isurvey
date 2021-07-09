@@ -83,7 +83,18 @@
   }
   // load question
   function loadFormQuestionOnResponse(){
-
+    $db = new Database;
+    $db->query("SELECT id,question FROM ".QSN_TBL." WHERE fid=?");
+    $db->bind(1,$_SESSION['formId']);
+    return $db->resultSet();
+  }
+  // load option ans response
+  function loadOption_Response($id){
+    $db = new Database;
+    $db->query("SELECT COUNT(oid) AS count,answer,comment  FROM
+                ".RESPONSE_TBL."  WHERE oid=? GROUP BY answer,comment");
+    $db->bind(1,$id);
+    return $db->resultSet();
   }
   // activity log
   function aLog($msg){

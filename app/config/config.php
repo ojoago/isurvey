@@ -9,12 +9,17 @@
   define('APPVERSION','0.1');//app version
   define('USER_TBL','users_tbl');//login table
   define('ACTIVITY_LOG_TBL','activity_log');
+  // questionnaires
   define('FMS_TBL','forms');//form
   define('FMS_STN_TBL','form_section');//form section
-  define('QSN_TBL','questions');
-  define('RESPONSE_TBL','response');
-  define('OPN_TBL','options');
+  define('QSN_TBL','form_questions');
+  define('RESPONSE_TBL','form_response');
+  define('OPN_TBL','form_options');
   define('RESPONDENT_TBL','respondent');
   define('QUICK_Q_TBL','quick_questions');// quick question table
-
+  // pulls
+  define('PL_TBL','pulls');
+  define('PL_ELT_TBL','pull_electorate');
+  define('PL_CD_TBL','pull_code');
+  define('PL_CNDD_TBL','pull_candidate');
   define('NAIRA','&#8358;');

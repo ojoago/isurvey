@@ -97,7 +97,7 @@ u{
                 </form>
             </div>
         </div>
-<?php include_once(APPROOT.'/views/inc/footer.php');?>
+<?php include_once(APPROOT.'/views/includes/footer.php');?>
 <div class="modal fade" id="forgetPwd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

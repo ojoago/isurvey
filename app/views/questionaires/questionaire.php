@@ -5,7 +5,7 @@
      Total FORM <?php echo count($data['forms']) ?>
       <p>
      <?php foreach($data['forms'] as $row): ?>
-      <a href="<?php echo URLROOT ?>/questionaires/edit/<?php echo $row->id ?>" class="m-2 mb-2"><button type= "button" class="btn btn-primary"><?php echo $row->title ?> </button></a>
+      <a href="<?php echo URLROOT ?>/questionaires/edit/<?php echo $row->id ?>" class="m-2 mb-2"><button type= "button" class="btn btn-primary mb-1"><?php echo $row->title ?> </button></a>
      <?php endforeach; ?>
    </p>
    </div>

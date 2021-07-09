@@ -28,4 +28,4 @@
 <div class="container">
   At iSurvey we strive to maintain the highest possible level of quality and service - always keeping in mind the importance of listening to the feedback we get from our customers or users of this site.
 </div>
-<?php include_once(APPROOT.'/views/inc/footer.php');?>
+<?php include_once(APPROOT.'/views/includes/footer.php');?>

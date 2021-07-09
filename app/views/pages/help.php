@@ -264,4 +264,4 @@
 						<a href ="mailto:isurvey@gmail.com?subject=me&body= "><input type="button" class="btn btn-success createAccount" value="TELL us how to improve"></a>
 </section> -->
 
-<?php include_once(APPROOT.'/views/inc/footer.php');?>
+<?php include_once(APPROOT.'/views/includes/footer.php');?>
