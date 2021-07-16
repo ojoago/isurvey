@@ -102,6 +102,34 @@
         ajaxControl();
         $this->model->updateSection(str_replace('s_','',escapeString($_POST['id'])),escapeString($_POST['txt']));
       }
+      if(isset($_POST['mergeSection'])){
+        ajaxControl();
+        $id=$msg=$error='';
+        parse_str($_POST['form'],$_POST);
+        if(!isset($_POST['mid']) or empty($_POST['mid'])){
+          $error='Select Section to merge';
+        }
+        if(!isset($_POST['del_']) or empty($_POST['del_'])){
+          $error='Select a section';
+        }
+        if(empty($error)){
+          $id=str_replace('del_','',escapeString($_POST['del_']));
+          if($this->model->mergeSection($id,escapeString($_POST['mid']))){
+            deleteByCol(FMS_STN_TBL,'id',$id);
+            $msg=prettyMsg('Section Merged');
+          }
+        }else{
+          $error=prettyMsg($error,'danger');
+        }
+        jsonEncode(['error'=>$error,'msg'=>$msg,'section'=>@$_POST['mid'],'id'=>$id]);
+      }
+
+      if(isset($_POST['removeFormSection'])){
+        ajaxControl();
+        $id=str_replace('del_','',escapeString($_POST['id']));
+        $this->model->deleteSection($id);
+        jsonEncode($id);
+      }
       // update form name and description
       if(isset($_POST['updateFormInfo'])){
         ajaxControl();
@@ -164,7 +192,7 @@
         $id=str_replace('qtype','',escapeString($_POST['id']));
         $this->model->changeQuestionType($id,escapeString($_POST['type']));
         $this->getType($id,$_POST['type']);
-        echo $id;
+        jsonEncode($id);
       }
 
     }
@@ -203,41 +231,51 @@
     public function formSubmission(){
       if(isset($_POST['submitForm'])){
         parse_str($_POST['form'],$_POST);
-        // print_r($_POST);die();
         $comment=@$_POST['comment'];
-        $check=$_POST['check'];
+        $check=@$_POST['check'];
         unset($_POST['comment']);
         unset($_POST['check']);
-        $l=0;
         foreach($_POST as $key => $val) {
           if(is_array($comment)){
             foreach($comment as $k => $cmt){
               if($key==$k){
                 $this->model->postResponse($k,$val,$cmt);
-                $l=$k;
+              }else {
+                $this->model->postResponse($key,$val);
               }
             }
+          }else{
+            $this->model->postResponse($key,$val);
           }
-          if($l==$key)
-            continue;
-          $this->model->postResponse($key,$val);
         }
         if(is_array($check)){
           $this->loopCheckBox($check);
         }
-        echo 'success';
+        jsonEncode('success');
       }
-
     }
 
     private function loopCheckBox($array){
+      $comment=$array['comment'];
+      unset($array['comment']);
       foreach($array AS $key => $val){
-        $this->loopObject($key,$val);
+        if(is_array($comment)){//check if checkbox option contains comment
+          foreach($comment as $k => $cmt){ //if comment not empty add comment
+            if($k==$key){
+              $this->loopObject($key,$val,$cmt);
+            }else{// ignore comment if comment is empty
+              $this->loopObject($key,$val);
+            }
+          }
+        }else{// 
+          $this->loopObject($key,$val);
+        }
       }
     }
-    private function loopObject($id,$obj){
+    private function loopObject($id,$obj,$cmt=''){
       foreach($obj as $val){
-        $this->model->postResponse($id,$val);
+        $this->model->postResponse($id,$val,$cmt);
+        $cmt='';//set comment to empty after inserting the first one
       }
     }
   }

@@ -48,6 +48,12 @@
           <div class="tab-pane fade in" id="response">
             <fieldset class="border p-4">
               <legend  class="w-auto small"> Response</legend><br>
+              <select class="" name="" id="changeView">
+                <option disabled selected>Display Mode</option>
+                <option value="QAR">Question and Response</option>
+                <option value="OAR">Option and Response</option>
+                <option value="OARD">Option and Response and date</option>
+              </select>
               <button type="button" id="exportPDF" class="btn btn-warning btn-sm exportBtn">PDF</button>
               <button type="button" id="exportCSV" class="btn btn-success btn-sm exportBtn">CSV</button>
               <div class="table table-responsive" id="resultTable">
@@ -69,10 +75,24 @@
 
 <script>
   $(document).ready(function(){
+    function scrollToSection(section){
+      document.getElementById(section).scrollIntoView({behavoir :"smooth"});
+    }
+    $('#changeView').change(function(){
+      var type=$(this).val();
+      $.ajax({
+        url:"<?php echo URLROOT ?>/html_helpers/formsHelper.php",
+        type:"POST",
+        data:{changeResponseType:true,type:type},
+        success:function(data){
+          $('#tableContent').html(data);
+        }
+      });
+    });
     loadResponse();
     function loadResponse(){
       $.ajax({
-        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        url:"<?php echo URLROOT ?>/html_helpers/formsHelper.php",
         type:"POST",
         data:{loadResponse:true},
         success:function(data){
@@ -97,44 +117,32 @@
 
     for (var i = 0; i < rows.length; i++) {
         var row = [], cols = rows[i].querySelectorAll("td, th");
-
         for (var j = 0; j < cols.length; j++)
             row.push(cols[j].innerText);
-
         csv.push(row.join(","));
     }
-
     // Download CSV file
     downloadCSV(csv.join("\n"), simp);
 }
 function downloadCSV(csv, filename) {
     var csvFile;
     var downloadLink;
-
     // CSV file
     csvFile = new Blob([csv], {type: "text/csv"});
-
     // Download link
     downloadLink = document.createElement("a");
-
     // File name
     downloadLink.download = filename;
-
     // Create a link to the file
     downloadLink.href = window.URL.createObjectURL(csvFile);
-
     // Hide download link
     downloadLink.style.display = "none";
-
     // Add the link to DOM
     document.body.appendChild(downloadLink);
-
     // Click download link
     downloadLink.click();
 }
     // response stop here
-
-
     formHeader()
     // create new form if not Exist
     function formHeader(id=0){
@@ -150,7 +158,7 @@ function downloadCSV(csv, filename) {
     // load form
     function loadFormHeader(id){
       $.ajax({
-        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        url:"<?php echo URLROOT ?>/html_helpers/formsHelper.php",
         type:"POST",
         data:{loadFormHeader:true,formId:id},
         success:function(data){
@@ -182,7 +190,7 @@ function downloadCSV(csv, filename) {
     }
     function loadQuestionHeader(id){
       $.ajax({
-        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        url:"<?php echo URLROOT ?>/html_helpers/formsHelper.php",
         type:"POST",
         data:{loadQuestionHeader:true,id:id},
         success:function(data){
@@ -197,11 +205,10 @@ function downloadCSV(csv, filename) {
         type:"POST",
         data:{createFormSection:true},
         success:function(data){
-          //loadFormHeader(data);
+          location.reload();
         }
       });
     });
-
     // update section description
     $(document).on('change','.sectionHeader',function(){
       var txt=$(this).val();
@@ -213,6 +220,64 @@ function downloadCSV(csv, filename) {
         success:function(){}
       });
     });
+    // remove section
+    $(document).on('click','.removeSection',function(){
+      var id=$(this).attr('id');
+      $('#activeSectionId').val(id);
+      $('#removingSection').modal('show');
+    });
+    $('#mergeSection').click(function(){
+      var id=$('#activeSectionId').val();
+      $('#mergeSectionId').val(id);
+      $.ajax({
+        url:"<?php echo URLROOT ?>/html_helpers/formsHelper.php",
+        type:"POST",
+        data:{loadSectionToMerge:true,id:id},
+        success:function(data){
+          $('#availableSection').html(data);
+          $('#removingSection').modal('hide');
+          $('#mergeSectionModal').modal('show');
+        }
+      });
+    });
+    // merge section
+    $('#mergeSectionBtn').click(function(){
+      var form=$('#mergeSectionForm');
+      $.ajax({
+        url:"<?php echo URLROOT ?>/questionaires/manageForm",
+        type:"POST",
+        dataType:'JSON',
+        data:{mergeSection:true,form:form.serialize()},
+        success:function(data){
+          if(data.error==''){
+            showAlert('success')
+            $('#mergeSectionForm')[0].reset();
+            $('#mergeSectionModal').modal('hide');
+            $('#section_'+data.id).remove();
+            scrollToSection('section_'+data.section)
+          }else{
+            $('#mergeSectionMsg').html(data.error);
+          }
+        }
+      });
+    })
+    $('#deleteSection').click(function(){
+      var id=$('#activeSectionId').val();
+      removeSection(id)
+    });
+    function removeSection(id){
+      if(confirm('This will delete Section and all Questions, Options and response under it')){
+        $.ajax({
+          url:"<?php echo URLROOT ?>/questionaires/manageForm",
+          type:"POST",
+          data:{removeFormSection:true,id:id},
+          success:function(id){
+            $('#section_'+id).remove();
+            $('#removingSection').modal('hide');
+          }
+        });
+      }
+    }
     // change question type
     $(document).on('change','.changeQuestionType',function(){
       var id=$(this).attr('id');
@@ -228,7 +293,7 @@ function downloadCSV(csv, filename) {
     });
     function reloadQuestion(qid,type){
       $.ajax({
-        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        url:"<?php echo URLROOT ?>/html_helpers/formsHelper.php",
         type:"POST",
         data:{reloadOption:true,id:qid,type:type},
         success:function(data){
@@ -249,7 +314,7 @@ function downloadCSV(csv, filename) {
     nextQuestionController('nextQuestion');
     function nextQuestionController(id){
       $.ajax({
-        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        url:"<?php echo URLROOT ?>/html_helpers/formsHelper.php",
         type:"POST",
         data:{loadQuestionTypeController:true},
         success:function(data){
@@ -273,7 +338,7 @@ function downloadCSV(csv, filename) {
     // reload question option on create
     function loadMoreOption(qid){//qid =question id, oid option id
       $.ajax({
-        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        url:"<?php echo URLROOT ?>/html_helpers/formsHelper.php",
         type:"POST",
         data:{loadActiveOption:true,id:qid},
         success:function(data){
@@ -285,7 +350,7 @@ function downloadCSV(csv, filename) {
     // adding more question
     function loadFieldSet(){
       $.ajax({
-        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        url:"<?php echo URLROOT ?>/html_helpers/formsHelper.php",
         type:"POST",
         data:{loadNextQuestion:true},
         success:function(data){
@@ -311,15 +376,17 @@ function downloadCSV(csv, filename) {
     });
     function loadAddedQuestion(id){
       $.ajax({
-        url:"<?php echo URLROOT ?>/functions/formsHelper.php",
+        url:"<?php echo URLROOT ?>/html_helpers/formsHelper.php",
         type:"POST",
         data:{loadAddedQuestion:true,id:id},
         success:function(data){
           $('#fieldset').append(data);
-           document.getElementById('fieldset_r'+id).scrollIntoView({behavoir :"smooth"});
+          scrollToSection('fieldset_r'+id)
+          // document.getElementById('fieldset_r'+id).scrollIntoView({behavoir :"smooth"});
         }
       });
     }
+
     $(document).on('change','.questionTitle',function(){
       var id=$(this).attr('id');
       var qs=$(this).val();
@@ -429,6 +496,52 @@ function downloadCSV(csv, filename) {
 </script>
 
 <!-- Modal -->
+<!-- Remove section modal -->
+<div class="modal fade" id="removingSection" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title" >Remove Section</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="form-group text-center form" method="post">
+          <input type="hidden"  id="activeSectionId">
+          <button type="button" class="btn btnBox iSurveyColor" id="mergeSection"> <i class="fa fa-plus"></i> Merge</button>
+          <button type="button" class="btn btnBox btn-danger"  id="deleteSection"> <i class="fa fa-trash-o"></i> Delete</button>
+			</form>
+      </div>
+      <div class="modal-footer bg-danger">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn iSurveyColor" id="quickSurveyBtn"> <i class="fa fa-plus"></i> Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Remove section modal end here -->
+<!-- Merge section modal -->
+<div class="modal fade" id="mergeSectionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-info">
+        <h5 class="modal-title" >Merge Section</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <span id="mergeSectionMsg"></span>
+          <form class="form-group text-center form" id="mergeSectionForm">
+            <input type="hidden" name="del_"  id="mergeSectionId">
+           <p id="availableSection"></p>
+			    </form>
+      </div>
+      <div class="modal-footer bg-info">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn iSurveyColor" id="mergeSectionBtn"> <i class="fa fa-plus"></i> Merge</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Remove section modal end here -->
 <!-- Quick Survey modal -->
 <div class="modal fade" id="quickSurveyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">

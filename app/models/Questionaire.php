@@ -102,7 +102,20 @@
       $this->db->bind(':dsc',$dsc);
       return $this->db->execute() ? true : false;
     }
-
+    public function mergeSection($id,$sid){
+      $this->db->query("UPDATE ".QSN_TBL." SET sid=:sid WHERE sid=:id ");
+      $this->db->bind(':id',$id);
+      $this->db->bind(':sid',$sid);
+      return $this->db->execute() ? true : false;
+    }
+    // delete section and dependent
+    public function deleteSection($id){
+      $this->db->query("DELETE f FROM ".FMS_STN_TBL." f
+                        LEFT JOIN ".QSN_TBL." q ON q.sid = f.id LEFT JOIN ".OPN_TBL." o ON o.qid=q.id
+                        LEFT JOIN ".RESPONSE_TBL." r ON r.qid=q.id WHERE f.id = ? ");
+      $this->db->bind(1,$id);
+      return $this->db->execute() ? true : false;
+    }
 
     public function createFormQuestion($data){
       $this->db->query("INSERT INTO ".QSN_TBL." SET fid=:fid,question=:question,
@@ -187,7 +200,7 @@
 
     // insert response
     public function postResponse($id,$val,$cmt=''){
-      $this->db->query("INSERT INTO ".RESPONSE_TBL." SET oid=:id,answer=:an,comment=:cmt,respond_on=:date");
+      $this->db->query("INSERT INTO ".RESPONSE_TBL." SET qid=:id,answer=:an,comment=:cmt,respond_on=:date");
       $this->db->bind(':id',$id);
       $this->db->bind(':an',$val);
       $this->db->bind(':cmt',$cmt);
@@ -198,7 +211,7 @@
     public function loadResponse($id){
       $this->db->query("SELECT q.question,o.options,COUNT(r.answer) AS count,r.comment FROM
                         ".QSN_TBL." q LEFT JOIN ".OPN_TBL." o ON q.id=o.qid
-                        LEFT JOIN ".RESPONSE_TBL." r ON o.id=r.oid WHERE q.fid= ? GROUP BY o.options,r.answer ORDER BY q.id ASC");
+                        LEFT JOIN ".RESPONSE_TBL." r ON o.id=r.qid WHERE q.fid= ? GROUP BY o.options,r.answer ORDER BY q.id ASC");
       $this->db->bind(1,$id);
       return $this->db->resultSet();
     }

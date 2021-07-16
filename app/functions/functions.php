@@ -113,7 +113,7 @@
      return date('Y-m-d H:i:s');
    }
    function userName(){
-      return base64_decode($_SESSION['iSurveyUserEMail']);
+      return isset($_SESSION['iSurveyUserEMail']) ? base64_decode($_SESSION['iSurveyUserEMail']) : false;
    }
    function userId(){
      return isset($_SESSION['iSurveyUserId']) ? base64_decode($_SESSION['iSurveyUserId']) : false;

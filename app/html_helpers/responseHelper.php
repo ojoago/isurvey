@@ -11,7 +11,6 @@
       case 1 :
         $form='';
         break;
-
       default:
         $form=loadQuestionSection($section);
         break;
@@ -70,17 +69,18 @@
               <option disabled selected> Select Option</option>
               '.loopDropDown(loadOption($id)).'
          </select>';
-          $inputType.=$comment== 'enable' ? showComment($id): '';
+          $inputType.=$comment== 'enable' ? showComment($id,$type): '';
        break;
        default:
        $inputType=loopOptions(loadOption($id),$type,$require,$id);
-       $inputType.=$comment== 'enable' ? showComment($id): '';
+       $inputType.=$comment== 'enable' ? showComment($id,$type): '';
        break;
      }
      return $inputType;
    }
-   function showCOmment($id){
-     return '<h6>Please Comment</h6><textarea type="text" name="comment['.$id.']" class="form-control form-control-sm" placeholder ="Paragraph" ></textarea>';
+   function showCOmment($id,$type='radio'){
+      $type = $type=='checkbox' ? 'check[comment]['.$id.']' : 'comment['.$id.']' ;
+     return '<h6>Please Comment</h6><textarea type="text" name="'.$type.'" class="form-control form-control-sm" placeholder ="Paragraph" ></textarea>';
    }
    function loopOptions($result,$type,$require,$id){
      $in='';

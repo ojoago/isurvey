@@ -15,8 +15,8 @@
    //  require class that require database
     require_once('functions/dbQuery.php');
     require_once('functions/functions.php');
-    require_once('functions/dropdown.php');
-    require_once('functions/loadmodal.php');
-    require_once('functions/formsHelper.php');
-    require_once('functions/responseHelper.php');
-    include_once('helpers/pullHelper.php');
+    require_once('html_helpers/dropdown.php');
+    require_once('html_helpers/loadmodal.php');
+    require_once('html_helpers/formsHelper.php');
+    require_once('html_helpers/responseHelper.php');
+    include_once('html_helpers/pullHelper.php');

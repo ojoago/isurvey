@@ -18,6 +18,10 @@ header >nav{
 	margin-top: -15px;
 }
 
+.btnBox{
+	border-radius: 1px !important;
+}
+
 .navbar-brand{
 	color: #fff;
 	margin: 0;

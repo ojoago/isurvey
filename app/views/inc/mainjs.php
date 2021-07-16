@@ -26,7 +26,8 @@
 	   $('html, body').animate({scrollTop:0},'100');
 	});
   $('.btn-close,.modalClose').click(function(){
-    $('.modalForm')[0].reset();
+    var id=$(this).attr('id');
+    $('#'+id)[0].reset();
   });
 	// window.onscroll = function() {scrollFunction()};
 	// 	function scrollFunction() {

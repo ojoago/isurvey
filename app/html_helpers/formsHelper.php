@@ -45,10 +45,10 @@
   function wrapSection($result){
     $section='';
     foreach($result as $row){
-      $dsc=$row->dsc=='' ? '' :
-      '<input type ="text" value="'.$row->dsc.'" class="inputBox form-control form-content-sm sectionHeader" id="s_'.$row->id.'">';
+      $dsc='<input type ="text" value="'.$row->dsc.'" class="inputBox form-control form-content-sm sectionHeader" id="s_'.$row->id.'">';
       $section .='
         <fieldset class ="border p-2 m-1 mt-3 sectionWrapper" id="section_'.$row->id.'">
+        <button class="removeSection btn btn-xs" id="del_'.$row->id.'">del</button>
         <legend class="w-auto small">'.$dsc.'</legend>
         '.loadQuestion(loadSectionQuestion($row->id)).'
         </fieldset>
@@ -139,17 +139,31 @@
   function option($id,$option='Option',$type){
     $input='
       <div class="optionContainer" id="optionWrapper_'.$id.'">
-      <input type="'.$type.'" name="" value="" disabled>
+      <i class="fa  '.fafa($type).'" ></i>
       <input type="text" class="inputBox questionOption" id="'.$id.'" value="'.$option.'" placeholder="option">
       <i class ="fa fa-times-circle removeOption pointer" id="_'.$id.'" title="remove Option" data-bs-toggle="tooltip" data-bs-placement="right"></i> <br>
       </div>
     ';
     return $input;
   }
+  function fafa($type){
+    switch ($type) {
+      case 'radio':
+        $fa=' fa-circle-o';
+        break;
+      case 'checkbox':
+        $fa='fa-square-o';
+        break;
+      case 'dropdown':
+        $fa='fa-chevron-down';
+        break;
+    }
+    return $fa;
+  }
 // creating form stop here
 // view response goes here
 if(isset($_POST['loadResponse'])){
-  jsonEncode(loopQuestionResponse(loadFormQuestionOnResponse()));
+  jsonEncode(loopQuestionResponse(loadQuestionAndAnswer()));
 }
 function loopQuestionResponse($result){
   $table='
@@ -158,8 +172,9 @@ function loopQuestionResponse($result){
       <tr>
         <th>S/N</th>
         <th>Question</th>
-        <th>Options</th>
-
+        <th>Answer</th>
+        <th>Count</th>
+        <th>Comment</th>
       </tr>
     </thead>
     <tbody>
@@ -169,7 +184,9 @@ function loopQuestionResponse($result){
       <tr>
         <td>'.++$n.'</td>
         <td>'.$row->question.'</td>
-        <td>'.loopResponse(loadOption_Response($row->id)).'</td>
+        <td>'.$row->answer.'</td>
+        <td>'.$row->count.'</td>
+        <td>'.$row->comment.'</td>
       </tr>
     ';
   }
@@ -177,7 +194,7 @@ function loopQuestionResponse($result){
   return $table;
 }
 function loopResponse($result){
-  $rows='<table class="table " width="100%">';
+  $rows='<table class="table table-bordered" width="100%">';
   foreach($result as $row) {
     $rows.='
       <tr>
@@ -191,3 +208,103 @@ function loopResponse($result){
   $rows.='</table>';
   return $rows;
 }
+
+if(isset($_POST['changeResponseType'])){
+  switch ($_POST['type']) {
+    case 'QAR':
+      $table=loopQuestionResponse(loadQuestionAndAnswer());
+    break;
+    case 'OAR':
+      $table=(optionCount(loadOptionOnly()));
+      break;
+    case 'OARD':
+      $table=loopOptionAndDate(loadOptionAndDate());
+      break;
+  }
+  jsonEncode($table);
+}
+
+function optionCount($sql){
+  $n=0;
+  $table='
+    <table class="table table-hover table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>S/N</th>
+        <th>Options</th>
+        <th>Count</th>
+        <th>Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+  ';
+  foreach($sql as $row){
+    $table.='
+      <tr>
+        <td>'.++$n.'</td>
+        <td>'.$row->answer.'</td>
+        <td>'.$row->count.'</td>
+        <td>'.$row->comment.'</td>
+      </tr>
+    ';
+  }
+  $table.='</tbody></table>';
+  return $table;
+}
+function loopOptionAndDate($sql){
+  $n=0;
+  $table='
+    <table class="table table-hover table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>S/N</th>
+        <th>Date</th>
+        <th>Options</th>
+        <th>Count</th>
+        <th>Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+  ';
+  foreach($sql as $row){
+    $table.='
+      <tr>
+        <td>'.++$n.'</td>
+        <td>'.$row->date.'</td>
+        <td>'.$row->answer.'</td>
+        <td>'.$row->count.'</td>
+        <td>'.$row->comment.'</td>
+      </tr>
+    ';
+  }
+  $table.='</tbody></table>';
+  return $table;
+}
+
+if(isset($_POST['loadSectionToMerge'])){
+  $result=loadSectionToMerge(str_replace('del_','',escapeString($_POST['id'])));
+  $i=0;
+  $dropDown='
+      <select name ="mid" id ="mid" class="form-control form-control-sm">
+      <option disabled selected>Select Section</option>';
+  if($result){
+    foreach($result as $row) {
+      $dropDown.='<option value="'.$row->id.'">'.$row->section.' '.++$i.' > '.$row->dsc.' </option>';
+    }
+  }
+  $dropDown.='</select>';
+  jsonEncode($dropDown);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// end
